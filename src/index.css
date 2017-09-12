@@ -1,0 +1,304 @@
+@font-face {
+  font-family: 'Twylite';
+  src: url(./fonts/TWYLZW.TTF) format('truetype');
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Twylite', Fallback, sans-serif;
+}
+
+.app {
+  text-align: left;
+  background: black;
+}
+.game {
+  background: transparent;
+}
+.firstPuzzle {
+  position: absolute;
+  top: 10%;
+  left: 30%;
+}
+.eventTitle {
+  position: absolute;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 60px;
+  width: 100%;
+  font-family: 'Twylite';
+}
+.viewpane {
+  background: #56e;
+  position: absolute;
+}
+.viewItem {
+  position: absolute;
+  cursor: pointer;
+}
+.newPuzzleCount {
+  position: absolute;
+  border-radius: 5px;
+  bottom: 10px;
+  right: 13%;
+  padding: 3px;
+  background: rgba(23, 148, 67, 0.70);
+  color: rgba(255, 255, 255, 0.80);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.phhomelink {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+.puzzleDiag {
+  background-color: rgba(60, 60, 60, .95);
+  position: absolute;
+  border-radius: 12px;
+}
+.listPane {
+  background: #82c;
+  position: absolute;
+  overflow: hidden;
+  overflow: auto;  
+}
+.grouping {
+  display: block;
+}
+input[type="radio"] {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+label {
+  cursor: pointer;
+  display: block;
+  float: left;
+  padding: .2em .4em;
+  background-color: #ccc;
+  border-style: solid;
+  border-width: 1px 1px 1px 0;
+  border-color: #666;
+}
+label.selected {
+  background-color: green;
+}
+.puzzleItemsList {
+  list-style-type: none;
+  padding: 2px;
+}
+.puzzleItem {
+  background-color: #616161;
+  position: relative;
+  color: white;
+}
+.puzzleItemPdf {
+  position: absolute;
+}
+.statusIcon {
+  background-color: transparent;
+  left: -2px;
+  top: -3px;
+  position: absolute;
+}
+.arcIcon {
+  right: 0px;
+  bottom: 0px;
+  position: absolute;
+}
+li.puzzleListItem {
+  list-style: none;
+  float: left;
+  padding: 8px;
+}
+.thingsPane {
+  background: #9c5;
+  position: absolute;
+  overflow: hidden;
+  overflow: auto;  
+}
+.thing {
+  background: white;
+  border-style: solid;
+  position: relative;
+  overflow: hidden;
+}
+li.thingListItem {
+  list-style: none;
+  float: left;
+  padding: 10px;
+}
+.btn {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: transparent;
+}
+.pdfViewer {
+  top: 50px;
+  position: absolute;
+  background: 'transparent';
+  float: right;
+  right: 60px;
+  color: white;
+  text-align: center;
+  font-size: 3vmin;
+  font-weight: bold;
+  overflow: hidden;
+}
+.btnSubmit {
+  width: 100px; 
+  height: 40px; 
+  font-size: 150%; 
+  background: limegreen; 
+  color: white;
+  position: relative;
+  top: 20px;
+  left: 20px;
+  text-align: center;
+}
+.toggleBtn {
+  float: left;
+  margin: 2px;
+  border-style: solid;
+  border-radius: 2px;
+  border-width: 2px;
+  width: 7.5%;
+}
+.toggleBtnUp {
+  border-color: lightgray gray gray lightgray;
+  background-color: gray;
+}
+.toggleBtnDown {
+  border-color: gray lightgray lightgray gray;
+  background-color: white;
+}
+.btnFilter {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background-color: white;
+  margin: 1px;
+}
+.btnImage {
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+}
+.txtInputLabel {
+  left: 30px;
+  top: 15px;
+  position: relative;
+}
+.txtInput {
+  width: 220px;
+  height: 20px;
+}
+.submissions{
+  position: relative;
+  width: 350px;
+  height: 50%;
+  top: 170px;
+  left: 20px;
+}
+.submissionsLabel{
+  position: relative;
+  color: tan;
+  text-align: left;
+  font-weight: bold;
+}
+.submissionsList{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-style: solid;
+  border-color: tan;
+  border-width: medium;
+  background: lightgray;
+  color: #333;
+  overflow: auto;
+  font-style: italic;
+}
+.answerForm {
+    top: 10px;
+    left: 10px;
+}
+.answerBox{
+  position: relative;
+  width: 350px;
+  top: 30px;
+  left: 20px;
+}
+.answerBoxLabel{
+  position: relative;
+  color: gray;
+  text-align: left;
+  font-weight: bold;
+}
+.solved .answerBoxLabel{
+  color: green;
+}
+.answerBoxText{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-style: solid;
+  border-color: gray;
+  border-width: medium;
+  color: white;
+  overflow: auto;
+  font-style: italic;
+}
+.solved .answerBoxText{
+  border-color: green;
+}
+
+.responseBox{
+  position: relative;
+  width: 350px;
+  top: 30px;
+  left: 20px;
+}
+.responseBoxLabel{
+  position: relative;
+  color: gray;
+  text-align: left;
+  font-weight: bold;
+}
+.solved .responseBoxLabel{
+  color: green;
+}
+.responseBoxText{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-style: solid;
+  border-color: gray;
+  border-width: medium;
+  color: white;
+  overflow: auto;
+  font-style: italic;
+}
+.solved .answerBoxText{
+  border-color: green;
+}
+
+
+.numPages{
+  color: white;
+  text-align: center;
+  font-size: 3vmin;
+  font-weight: bold;  
+  position: relative;
+}
+
+.puzzleTitle {
+  text-align: center;
+  color: white;
+  font-size: 300%;
+}
