@@ -21,16 +21,13 @@ class ListPane extends Component {
         search: '',
         collapsedGroups: new Set(),
         filteredArcs: new Set(this.arcFilterTypes()),
-        filteredStatus: new Set(this.statusFilterTypes()),
+        filteredStatus: new Set([ 'Solved', 'Unsolved', 'Meta', 'NonMeta' ]),
     };
   }
 
   arcFilterTypes() {
+    // FIXME: meta-meta?
     return this.props.arcData.map(a => a.descriptor);
-  }
-
-  statusFilterTypes() {
-    return [ 'Solved', 'Unsolved' ];
   }
 
   groupTypes() {
@@ -65,7 +62,11 @@ class ListPane extends Component {
   }
 
   isVisibleFromFilteredMeta(puzzle) {
-    return true; // FIXME
+    if (puzzle.IsMetaPuzzle) {
+      return this.state.filteredStatus.has("Meta")
+    } else {
+      return this.state.filteredStatus.has("NonMeta");
+    }
   }
 
   isVisible(puzzle) {
@@ -136,6 +137,18 @@ class ListPane extends Component {
     </div>);
   }
 
+  renderIsMetaFilterButtons() {
+    return (<div>
+      <ToggleButton key="toggle-meta" descriptor="NonMeta" filterType="filteredStatus"
+                    img={filterIcon} // FIXME: Correct Icon
+                    onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)} />
+
+      <ToggleButton key="toggle-not-meta" descriptor="Meta" filterType="filteredStatus"
+                    img={filterIcon} // FIXME: Correct Icon
+                    onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)} />
+    </div>);
+  }
+
   renderFilters() {
     // FIXME: layout?
 
@@ -143,6 +156,7 @@ class ListPane extends Component {
       <div className='filtercontrols'>
         {this.renderArcFilterButtons()}
         {this.renderSolvedFilterButtons()}
+        {this.renderIsMetaFilterButtons()}
       </div>
     );
   }
