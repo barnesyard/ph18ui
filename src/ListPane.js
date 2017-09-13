@@ -133,10 +133,11 @@ class ListPane extends Component {
       case "Arc": list = this.renderGroupedPuzzleList(puzzles, "Arc"); break;
       case "Status": list =this.renderGroupedPuzzleList(puzzles, "Status"); break;
       default : alert(this.state.groupBy);
-      }
-      return <div className='puzzlelist'>
-        {list}
-      </div>
+    }
+
+    return (<div className='puzzlelist'>
+      {list}
+    </div>);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -144,12 +145,21 @@ class ListPane extends Component {
   // will take in an array of puzzles and produce a flat list
   renderUngroupedPuzzleList(puzzles) {
     const filterdPuzzles = puzzles.filter(p => this.isVisible(p));
-    
+
     return (
       <ul className="puzzleItemsList">
         {filterdPuzzles.map(v => this.renderPuzzleListItem(v) )}
       </ul>
     )
+  }
+
+  groupByArc(puzzles) {
+    return puzzles.reduce((groups, puzzle) => {
+      const arc = puzzle.Arc;
+      groups[arc] = groups[arc] || []; // Create empty group if doesn't already exist
+      groups[arc].push(puzzle);        // Add puzzle to arc group
+      return groups;
+    }, {});
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -158,21 +168,14 @@ class ListPane extends Component {
   // grouped based on toggle settings.
   renderGroupedPuzzleList(puzzles, groupType) {
     console.log("Rendering a grouped list that is grouped by: " + groupType);
-    const byGroup = puzzles.reduce((groups, puzzle) => {
-      console.log("Grouping by: "  + groupType);
-      console.log('The current puzzle name: ' + puzzle.PuzzleName + ' and arc: ' + puzzle.Arc);
-      const g = puzzle[groupType];
-      // if (groupType === 'Status') {
-      //   g = puzzle.Solved ? 'Solved' : 'Unsolved';
-      // }
-        // const g = puzzle[grouping];
-        console.log ("Creating a grouping of " + g);
-        groups[g] ? console.log('groups[g] has value') : console.log('groups[g] has no value');
-        groups[g] = groups[g] || [];
-        groups[g].push(puzzle);
-        console.log("the groups[g] is now: " + groups[g][0].PuzzleName);
-        return groups;
-    }, {});
+
+    let byGroup;
+    if (groupType === "Arc") {
+      byGroup = this.groupByArc(puzzles);
+    } else {
+      console.log(`Unknown groupType ${groupType}`);
+      byGroup = {};
+    }
 
     return <div className='groupedlist'>
         {Object.keys(byGroup).sort().map(
