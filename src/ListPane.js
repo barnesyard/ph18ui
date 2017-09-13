@@ -131,7 +131,7 @@ class ListPane extends Component {
     switch (this.state.groupBy) {
       case "All": list = this.renderUngroupedPuzzleList(puzzles); break;
       case "Arc": list = this.renderGroupedPuzzleList(puzzles, "Arc"); break;
-      case "Status": list =this.renderGroupedPuzzleList(puzzles, "Status"); break;
+      case "Status": list = this.renderGroupedPuzzleList(puzzles, "Status"); break;
       default : alert(this.state.groupBy);
     }
 
@@ -162,6 +162,13 @@ class ListPane extends Component {
     }, {});
   }
 
+  groupByStatus(puzzles) {
+    let groups = { "Solved": [], "Unsolved": [] };
+    puzzles.forEach(p => p.Solved ? groups.Solved.push(p) : groups.Unsolved.push(p));
+    console.log(groups);
+    return groups;
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // This method renders the list of puzzle items with grouping. This
   // will take in an array of puzzles and produce a list of puzzles that are 
@@ -172,6 +179,8 @@ class ListPane extends Component {
     let byGroup;
     if (groupType === "Arc") {
       byGroup = this.groupByArc(puzzles);
+    } else if (groupType === "Status") {
+      byGroup = this.groupByStatus(puzzles);
     } else {
       console.log(`Unknown groupType ${groupType}`);
       byGroup = {};
