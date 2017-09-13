@@ -20,7 +20,7 @@ class ToggleButton extends Component {
 
     return (
       <div
-        key={this.props.key}
+        key={`${this.props.descriptor}-${this.props.filterType}`}
         className={`toggleBtn ${this.state.down ? 'toggleBtnDown' : 'toggleBtnUp'}`}
         onClick={(e) => this.handleClick(e)}
       >
