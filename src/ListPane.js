@@ -26,11 +26,7 @@ class ListPane extends Component {
   }
 
   arcFilterTypes() {
-    let arcTypes = [];
-    this.props.arcData.map(a => {
-      arcTypes.push(a.descriptor)
-    });
-    return arcTypes;
+    return this.props.arcData.map(a => a.descriptor);
   }
 
   statusFilterTypes() {
@@ -52,13 +48,27 @@ class ListPane extends Component {
     this.setState({ search: event.target.value });
   }
 
+  isVisibleFromSearch(puzzle) {
+    return puzzle.PuzzleName.toLowerCase().includes(this.state.search.toLowerCase());
+  }
+
+  isVisibleFromFilteredArcs(puzzle) {
+    return this.state.filteredArcs.has(puzzle.Arc);
+  }
+
+  isVisibleFromFilteredStatus(puzzle) {
+    return true; // FIXME
+  }
+
+  isVisibleFromFilteredMeta(puzzle) {
+    return true; // FIXME
+  }
+
   isVisible(puzzle) {
-    console.log("Verifying the puzzle it visible in the list pane given filters");
-    console.log("The puzzle name is: " + puzzle.PuzzleName);
-    console.log("The puzzle arc is: " + puzzle.Arc);
-    return puzzle.PuzzleName.toLowerCase().includes(this.state.search.toLowerCase())
-        && this.state.filteredArcs.has(puzzle.Arc);
-        //&& this.state.filteredTypes.has(puzzle.Solved ? '☑' : '☐');
+    return this.isVisibleFromSearch(puzzle)
+      && this.isVisibleFromFilteredArcs(puzzle)
+      && this.isVisibleFromFilteredStatus(puzzle)
+      && this.isVisibleFromFilteredMeta(puzzle);
   }
 
   renderSearchBox() {
