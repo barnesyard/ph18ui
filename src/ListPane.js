@@ -20,7 +20,8 @@ class ListPane extends Component {
         groupBy: 'All',
         search: '',
         collapsedGroups: new Set(),
-        filteredArcs: new Set(this.arcFilterTypes())
+        filteredArcs: new Set(this.arcFilterTypes()),
+        filteredStatus: new Set(this.statusFilterTypes()),
     };
   }
 
@@ -32,8 +33,8 @@ class ListPane extends Component {
     return arcTypes;
   }
 
-  solveFilterTypes() {
-    return [ '☐', '☑' ];
+  statusFilterTypes() {
+    return [ 'Solved', 'Unsolved' ];
   }
 
   groupTypes() {
@@ -99,7 +100,8 @@ class ListPane extends Component {
          return  <ToggleButton 
           key={a.descriptor} 
           descriptor={a.descriptor}
-          filterType="arcFilter" 
+          //filterType="arcFilter" 
+          filterType="filteredArcs" 
           altText={a.dimension} 
             img={a.icon}
             onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)}
@@ -210,7 +212,7 @@ class ListPane extends Component {
   renderPuzzleListItem(puzzle) {
     return (
       <li className="puzzleListItem" >
-        <PuzzleItem puzzle={puzzle} width={this.props.listPaneWidth} showPuzzleDiag={(p) => this.props.showPuzzle(p)}/>
+        <PuzzleItem puzzle={puzzle} width={this.props.listPaneWidth} showPuzzle={(p) => this.props.showPuzzle(p)}/>
       </li>
     )
   }
@@ -267,7 +269,7 @@ class PuzzleItem extends Component {
   
   handleClick(puzzleId) {
     console.log("Attempting to show a puzzle with ID: "+ puzzleId);
-    this.props.showPuzzleDiag(puzzleId);
+    this.props.showPuzzle(puzzleId);
   }
 
   setStatusIcon(status) {

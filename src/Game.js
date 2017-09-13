@@ -231,25 +231,11 @@ class Game extends Component {
     }
   }
   
-
-  /////////////////////////////////////////////////////////////////////////////
-  // This method will open the puzzle dialog when clicked on in the puzzle list.
-  // This is not needed after switching to use puzzle IDs.
-  showPuzzleFromList(puzzleId) {
-    let puzzle = this.state.puzzleList.find((element) => {
-      if(element.title === puzzleId) return element;
-    });
-
-    if(puzzle) {
-      this.showPuzzle(puzzle.puzzleId);
-    }
-    
-  }
-
   /////////////////////////////////////////////////////////////////////////////
   // This method will open the puzzle dialog when exposed from a room or 
   // from the puzzle list. Call the DB to get all puzzle details used in dialog.
   showPuzzle(puzzleId) {
+    console.log("Going to show another puzzle dialog.")
     let apiCall = new XMLHttpRequest(); 
     let phURI = 'api/puzzles/' + puzzleId;
     console.log("The URL to call: " + phURI);
@@ -418,7 +404,7 @@ class Game extends Component {
             listPaneWidth = {listPaneWidth}
             listPaneLeft = {listPaneLeft}
             puzzleList = {this.state.viewedPuzzleList}
-            showPuzzle = {(puzzleId) => this.showPuzzleFromList(puzzleId)}
+            showPuzzle = {(puzzleId) => this.showPuzzle(puzzleId)}
           />
         }
         { this.state.isInfoMode && false &&
