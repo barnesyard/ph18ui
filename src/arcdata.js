@@ -29,7 +29,7 @@ class ArcData {
         "dimension": "space",
         "icon": funnelImg,
       },
-      { "descriptor" : "Mind (e=mc^2)",
+      { "descriptor" : "Mind (E=mc^2)",
       "dimension": "mind",
       "icon": emc2Img,
       },

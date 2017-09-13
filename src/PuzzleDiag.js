@@ -22,21 +22,8 @@ class PuzzleDiag extends Component {
     e.stopPropagation();
   }
 
-  handleOpenPdf() {
-    window.open(this.props.puzzle["Puzzle"].PuzzleURL);
-  }
-
   handleClose() {
     this.props.close();
-  }
-
-  onPdfDocumentLoad (total) {
-    console.log("The PDF Loaded")
-    this.setState ({total: total});
-  }
-
-  onPdfPageLoad({ pageIndex, pageNumber }) {
-    this.setState({ pageIndex, pageNumber });
   }
 
   render() {
@@ -48,6 +35,11 @@ class PuzzleDiag extends Component {
     if (pdfPath.includes('.htm')) {
       console.log("The Puzzle URL: " + pdfPath);
       pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('htm', 'png');
+      console.log('The pngName is ' + pngName);
+    }
+    if (pdfPath.includes('.aspx')) {
+      console.log("The Puzzle URL: " + pdfPath);
+      pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('aspx', 'png');
       console.log('The pngName is ' + pngName);
     }
     let pngFullPath = pngPath + pngName;

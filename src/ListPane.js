@@ -53,9 +53,9 @@ class ListPane extends Component {
   }
 
   isVisible(puzzle) {
-    // console.log("Verifying the puzzle it visible in the list pane given filters");
-    // console.log("The puzzle name is: " + puzzle.PuzzleName);
-    // console.log("The puzzle arc is: " + puzzle.Arc);
+    console.log("Verifying the puzzle it visible in the list pane given filters");
+    console.log("The puzzle name is: " + puzzle.PuzzleName);
+    console.log("The puzzle arc is: " + puzzle.Arc);
     return puzzle.PuzzleName.toLowerCase().includes(this.state.search.toLowerCase())
         && this.state.filteredArcs.has(puzzle.Arc);
         //&& this.state.filteredTypes.has(puzzle.Solved ? '☑' : '☐');
@@ -117,12 +117,6 @@ class ListPane extends Component {
     console.log("Rendering the puzzle list");
     const puzzles = this.props.puzzleList;
 
-    // switch (this.state.groupBy) {
-    //   case "All": return this.renderUngroupedPuzzleList(puzzles);
-    //   case "Arc": return this.renderGroupedPuzzleList(puzzles, "Arc");
-    //   case "Status": return this.renderGroupedPuzzleList(puzzles, "Status");
-    //   default : alert(this.state.groupBy);
-    // }
     let list;
     switch (this.state.groupBy) {
       case "All": list = this.renderUngroupedPuzzleList(puzzles); break;
