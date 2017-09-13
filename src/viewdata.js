@@ -672,9 +672,9 @@ const viewData = [
         "name": "dream",
         "puzzleName": "Person or Persons Unknown",
         "requiredItems": [],
-        "top": "30%",
-        "left": "20%",
-        "width": "20%",
+        "top": "35%",
+        "left": "30%",
+        "width": "15%",
       },
       {
         "svg":seeNoEvil,

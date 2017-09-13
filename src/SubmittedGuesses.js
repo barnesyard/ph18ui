@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './index.css';
 
 class SubmittedGuesses extends React.Component {
-  render() {
+  render() { 
     return (
       <div className="submissions">
         <div className="submissionsLabel">
@@ -10,7 +10,12 @@ class SubmittedGuesses extends React.Component {
         </div>
         <div className="submissionsList">
           <ul>
-            {this.props.submissions.map(sub => <li key={sub.SubmissionId}>{sub.Attempt} response {sub.Response}</li>)}
+            {this.props.submissions.map(sub => {
+              console.log("Busy mapping responses: " + sub.Attempt);
+              let response = sub.Response ? sub.Response : '';
+              return <li key={sub.SubmissionId}>{sub.Attempt} {response}</li>
+              })
+            }
           </ul>
         </div>
       </div>

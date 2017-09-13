@@ -12,7 +12,7 @@ class ToggleButton extends Component {
   handleClick(event) {
     let pressedState = this.state.down;
     this.setState({down: !pressedState})
-    this.props.onClick(event, this.props.descriptor, 'filteredArcs')
+    this.props.onClick(event, this.props.descriptor, this.props.filterType)
   }
 
   render () {

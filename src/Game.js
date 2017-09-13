@@ -4,7 +4,7 @@ import ViewPane from './ViewPane.js';
 import ThingsPane from './ThingsPane.js';
 import ListPane from './ListPane.js';
 import Button from './Button.js';
-import FirstPuzzle from './FirstPuzzle.js';
+import OpeningScene from './OpeningScene.js';
 import PuzzleDiag from './PuzzleDiag.js';
 import { Database } from './Database.js';
 
@@ -39,12 +39,34 @@ class Game extends Component {
       origHeight: this.props.appHeight,
       thingsInventory: thingsInventory,
       currentView: 0,
-      totalPuzzleCount: 0
+      totalPuzzleCount: 0,
+      introSolved: false,
+      eventStarted: false,
     };
+  }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // This method will be called as soon as the DOM for this object (Game)
+  // is mounted. So do whatever asynchronous stuff you want to do here.
+  componentDidMount(){
     // Call this method to set puzzle list, it sets the state 
     this.updatePuzzleList();
-    this.showFirstPuzzle();
+    //TODO Remove this once the mechanism for the opening event is known
+    this.interval = setInterval(this.startEvent.bind(this), 100);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // This method will be called when the DOM for this object (Game)
+  // will be unmounted. Here you can stop timers and clean up.
+  componentWillUnmount(){
+    // add stuff here as needed. Leaving this here as a reminder to use it.
+  }
+
+  //TODO Remove this once the mechanism for the opening event is known
+  startEvent() {
+    console.log("Starting the event.");
+    clearInterval(this.interval);
+    this.setState({eventStarted: true,})
   }
 
   updateThingsInventory(thingId) {
@@ -63,7 +85,7 @@ class Game extends Component {
     //Setting the URI as a relative path that works locally and on server too
     let apiPuzzlesURI = 'api/puzzles';
     
-    let apiPuzzles = new XMLHttpRequest();
+    let apiPuzzles = new XMLHttpRequest();   
     apiPuzzles.open('GET', apiPuzzlesURI, true);
     apiPuzzles.onload = () => {
       if (apiPuzzles.status >= 200 && apiPuzzles.status < 400) {
@@ -77,17 +99,39 @@ class Game extends Component {
         this.addThumbnailInfo(puzzles);
         
         let totalPuzzleCount = puzzles.length;
-
+        console.log("After getting the puzzle list we are setting the number of unlocked puzzles to: " + totalPuzzleCount);
         // Create a list of puzzles that have not been viewed and save them in the state
         let viewedPuzzles = this.getViewedPuzzles(puzzles);
 
         let newPuzzleCount = totalPuzzleCount - viewedPuzzles.length;
 
+        // SPECIAL CASE: Intro puzzle will only be shown at the beginning so if it has
+        // not been solved then handle showing it here.
+        if(!this.state.introSolved){
+          console.log("The intro puzzle has not been solved. Setting it to rendered puzzle state.")
+          // Find the intro puzzle by title
+          let introTitle = "The World Next Door";
+          let introPuzzle = puzzles.find(puzzle => puzzle.PuzzleName === introTitle);
+          // this puzzle should always be in the list but in case it is not, handle that situation
+          if (introPuzzle) {
+            this.setState({introSolved: introPuzzle.Solved});
+            //Was it just solved? Handle that situation since we update puzzle list after each submission
+            if (introPuzzle.Solved ) {
+              this.closePuzzleDialog();
+            } else { 
+              this.showPuzzle(introPuzzle.PuzzleId)
+            }
+          } else {
+            // we didn't expect this so log something in the cosole
+            console.log("Unable to find the intro puzzle in list using name: " + introTitle);
+          }
+        }
+        console.log("Setting the state for the list of puzzles and the total puzzle count");
         this.setState({ 
-          puzzleList: puzzles,
           totalPuzzleCount: totalPuzzleCount,
-          viewedPuzzleList: viewedPuzzles,
           newPuzzleCount: newPuzzleCount,
+          viewedPuzzleList: viewedPuzzles,
+          puzzleList: puzzles,
         });
       } else {
         // ERROR HANDLING
@@ -100,17 +144,20 @@ class Game extends Component {
 
   addThumbnailInfo(puzzles) {
     puzzles.map(puzzle => {
-      //console.log("the puzzle pdf: " + puzzle.PuzzleURL);
-
       let pdfPath = puzzle.PuzzleURL ? puzzle.PuzzleURL : "missing.png";
       let lastSlash = pdfPath.lastIndexOf("/");
       let pngPath = "Puzzles/Thumbnails/"
       // This assumes all puzzles have pdf files. Need to see if there is htm or html files
       let pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('pdf', 'png');
       if (pdfPath.includes('.htm')) {
-        console.log("The Puzzle URL: " + pdfPath);
+        //console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
         pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('htm', 'png');
-        console.log('The pngName is ' + pngName);
+        //console.log('The pngName is ' + pngName);
+      }
+      if (pdfPath.includes('.aspx')) {
+        //console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
+        pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('aspx', 'png');
+        //console.log('The pngName is ' + pngName);
       }
       let pngFullPath = pngPath + pngName;      
       puzzle.PuzzleThumb = pngFullPath;
@@ -136,7 +183,6 @@ class Game extends Component {
       status = 'visible';
     } else {
       if(this.state.puzzleList) {
-        if (puzzleName.includes('estament')) {console.log("room status for purple testament")}
         let puzzle = this.state.puzzleList.find((element) => {
           if(element.PuzzleName.toLowerCase() === puzzleName.toLowerCase()) return element;
         });
@@ -145,7 +191,6 @@ class Game extends Component {
         }
       }
     }
-
     return status;
   }
 
@@ -203,7 +248,7 @@ class Game extends Component {
 
   /////////////////////////////////////////////////////////////////////////////
   // This method will open the puzzle dialog when exposed from a room or 
-  // from the puzzle list.
+  // from the puzzle list. Call the DB to get all puzzle details used in dialog.
   showPuzzle(puzzleId) {
     let apiCall = new XMLHttpRequest(); 
     let phURI = 'api/puzzles/' + puzzleId;
@@ -219,91 +264,13 @@ class Game extends Component {
       this.updatePuzzleList();
       }
     }
-
     //console.log('Time to call the API for the puzzle info');
     apiCall.send();
-
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // This method will open the puzzle dialog when exposed from a room or 
-  // from the puzzle list.
-  showFirstPuzzle() {
-    console.log("Updating the list of puzzles from the DB for first time");
-    //Setting the URI as a relative path that works locally and on server too
-    let apiPuzzlesURI = 'api/puzzles';
-    
-    let apiPuzzles = new XMLHttpRequest();
-    apiPuzzles.open('GET', apiPuzzlesURI, true);
-    apiPuzzles.onload = () => {
-      if (apiPuzzles.status >= 200 && apiPuzzles.status < 400) {
-        // Success!
-        let puzzles = JSON.parse(apiPuzzles.responseText);
-        // We have the list of puzzles now. It is the right time to add stuff
-        // needed by the UI.
-
-        // Add path to thumbnails to each item in the puzzle list
-        // It passes the list by reference so no need to return a new list
-        this.addThumbnailInfo(puzzles);
-        
-        let totalPuzzleCount = puzzles.length;
-
-        // Create a list of puzzles that have not been viewed and save them in the state
-        let viewedPuzzles = this.getViewedPuzzles(puzzles);
-
-        let newPuzzleCount = totalPuzzleCount - viewedPuzzles.length;
-
-        this.setState({ 
-          puzzleList: puzzles,
-          totalPuzzleCount: totalPuzzleCount,
-          viewedPuzzleList: viewedPuzzles,
-          newPuzzleCount: newPuzzleCount,
-        });
-
-
-        let firstPuzzle = puzzles.find(p => p.PuzzleName === "The World Next Door");
-        console.log("The first puzzle was found " + firstPuzzle.PuzzleName );
-        let apiCall = new XMLHttpRequest(); 
-        let phURI = 'api/puzzles/' + firstPuzzle.PuzzleId;
-        console.log("The URL to call: " + phURI);
-        apiCall.open('GET', phURI, true);
-        apiCall.onload = () => {
-        if (apiCall.status >= 200 && apiCall.status < 400) {
-          // Success!
-          // console.log("This is the response text we got back: " + apiCall.responseText)
-          let firstPuzzleDetails = JSON.parse(apiCall.responseText);
-          // console.log("Setting the state for the puzzle to render: " + puzzle.Puzzle.PuzzleName)
-          this.setState({ firstPuzzle: firstPuzzleDetails,  });
-          }
-        }
-    
-        //console.log('Time to call the API for the puzzle info');
-        apiCall.send();
-    
-
-
-      } else {
-        // ERROR HANDLING
-        // I really should do something if there is an error but I am not sure what
-      }
-
-    }
-    apiPuzzles.send();
-  }
-
+  // Submit answer to backend then update state.
   submitGuess(puzzleId, guess) {
-    // TO DO: verify that it is possible to submit (maybe gray out textbox)
-
-    // TODO: stop using the puzzle title 
-    // let puzzle = this.state.puzzleList.find((element) => {
-    //   if(element.title === puzzleId) return element;
-    // });
-
-    // let renderPuzzle = this.db.submitGuess(puzzleId, guess);
-    // this.setState({puzzleList: this.db.getUnlockedPuzzles(),})
-    // this.setState( { renderedPuzzle: renderPuzzle });
-
-    // Submit a guess
     console.log("Submitting a guess for puzzle ID: " + puzzleId);
     let apiCall = new XMLHttpRequest(); 
     let phURI = 'api/puzzles/' + puzzleId + "?guess=" + guess;
@@ -313,14 +280,15 @@ class Game extends Component {
       // Success!
       //console.log("This is the response text we got back from submitting a guess: " + apiCall.responseText)
       let puzzle = JSON.parse(apiCall.responseText);
+
+      // Set the renderstate again so the list of guesses in UI is refreshed
       this.setState({ renderedPuzzle: puzzle });
+      // In case the answer is right the puzzle list should be udpated
       this.updatePuzzleList();
       }
     }
 
     apiCall.send();
-
-
   }
 
   arraysAreEqual(x, y) {
@@ -339,7 +307,10 @@ class Game extends Component {
   // This is to allow for users to click outside of puzzle dialog to close it.
   handleGameClick() {
     // as of now we will only dismiss the puzzle dialog but maybe we need to do something else someday
-    this.closePuzzleDialog();
+    // don't do this if it is the opening scene
+    if (this.state.introSolved) {
+      this.closePuzzleDialog();
+    }
   }
 
   closePuzzleDialog() {
@@ -361,29 +332,29 @@ class Game extends Component {
   }
 
   hasBeenViewed(puzzle) {
-    //console.log("the viewed at for this puzzle: " + puzzle.ViewedAt);
-    if(!puzzle.ViewedAt) {console.log("Has not been viewed")};
     return puzzle.ViewedAt ? true : false;
   }
 
   getViewedPuzzles(puzzles) {
     const puzzleList = puzzles.filter(puz => this.hasBeenViewed(puz));
-    console.log("The number of puzzles to be in the list: " + puzzleList.length);
+    console.log("The number of puzzles to be in the viewed list: " + puzzleList.length);
+    puzzleList.map(p => console.log("This puzzle is in the list to be viewed: " + p.PuzzleName))
     return puzzleList;
   }
 
-  render() {
-    let gameHeight, gameWidth, scaleFactor;
-    // Handle resizing so that the game div stays in a 16:9 ratio
-    if ((this.props.appWidth / this.props.appHeight) > 16 / 9 ) {
-      gameWidth = this.props.appHeight / 9 * 16;
-      gameHeight = this.props.appHeight;
-    } else {
-      gameHeight = this.props.appWidth / 16 * 9;
-      gameWidth = this.props.appWidth;
+  renderOpeningScene(eventStarted) {
+    if (this.state.renderedPuzzle) {
+      return (
+        <OpeningScene
+          submitGuess = {(puzzleId, guess) => this.submitGuess(puzzleId, guess)}
+          puzzle = {this.state.renderedPuzzle}
+          eventStarted = {eventStarted}
+        />  
+      )
     }
-    scaleFactor = gameHeight / this.origHeight;
+  }
 
+  renderGame(gameWidth, gameHeight, scaleFactor) {
     // Let the Game object manage the size of the divs that are its children
     let viewWidth, viewHeight;
     if (this.state.isInfoMode) {
@@ -407,87 +378,104 @@ class Game extends Component {
       puzzDiagLeft = .1 * gameWidth;
       puzzDiagWidth = .8 * gameWidth; 
 
+    return (
+      <div className='normalScene'>
+        {this.state.puzzleList && 
+        <ViewPane
+          newPuzzleCount= {this.state.newPuzzleCount}
+          totalPuzzleCount= {this.state.totalPuzzleCount}
+          viewData = {viewData[this.state.currentView]}
+          viewWidth = {gameWidth}
+          viewHeight = {gameHeight}
+          getRoomItemStatus ={(puzzleId) => this.getRoomItemStatus(puzzleId)}
+          roomItemClicked ={(puzzleId, requiredItems) => this.roomItemClicked(puzzleId, requiredItems)}
+          isInfoMode = {this.state.isInfoMode}
+          scaleFactor = {scaleFactor}
+        />
+        }
+        <Button
+          onClick={() => this.handleModeChange()}
+          modeBtnTop = {viewHeight - 70}
+          modeBtnLeft = {viewWidth -70 }
+          btnLabel = "i"
+        />
+        <Button
+          onClick={() => this.handleMoveViewRight()}
+          modeBtnTop = {viewHeight / 2}
+          modeBtnLeft = {viewWidth -40 }
+          btnLabel = ">"
+        />
+        <Button
+          onClick={() => this.handleMoveViewLeft()}
+          modeBtnTop = {viewHeight / 2}
+          modeBtnLeft = { 10 }
+          btnLabel = "<"
+        />
+        {this.state.isInfoMode &&
+          <ListPane
+            arcData = {this.db.getArcData()}
+            listPaneHeight = {listPaneHeight}
+            listPaneWidth = {listPaneWidth}
+            listPaneLeft = {listPaneLeft}
+            puzzleList = {this.state.viewedPuzzleList}
+            showPuzzle = {(puzzleId) => this.showPuzzleFromList(puzzleId)}
+          />
+        }
+        { this.state.isInfoMode && false &&
+          <ThingsPane
+            infoPaneHeight = {infoPaneHeight}
+            infoPaneWidth = {infoPaneWidth}
+            infoPaneTop = {infoPaneTop}
+            thingsInventory = {this.state.thingsInventory}
+            updateThingsInventory = {(thingId) => this.updateThingsInventory(thingId)}
+          />
+        }
+        { this.state.renderedPuzzle &&
+          <PuzzleDiag
+            puzzDiagLeft = {puzzDiagLeft}
+            puzzDiagWidth = {puzzDiagWidth}
+            puzzDiagHeight = {gameHeight}
+            submitGuess = {(puzzleId, guess) => this.submitGuess(puzzleId, guess)}
+            close = {() => this.closePuzzleDialog()}
+            puzzle = {this.state.renderedPuzzle}
+          />
+        }
+      </div>
+      );
+  }
+
+
+  render() {
+    let gameHeight, gameWidth, scaleFactor;
+    // Handle resizing so that the game div stays in a 16:9 ratio
+    if ((this.props.appWidth / this.props.appHeight) > 16 / 9 ) {
+      gameWidth = this.props.appHeight / 9 * 16;
+      gameHeight = this.props.appHeight;
+    } else {
+      gameHeight = this.props.appWidth / 16 * 9;
+      gameWidth = this.props.appWidth;
+    }
+    scaleFactor = gameHeight / this.origHeight;
+
     let style = {
       width: gameWidth + 'px',
       height: gameHeight + 'px',
       postion: 'relative',
     };
-
+    console.log("The value of this.state.introSolved: " + this.state.introSolved);
+    let scene = this.state.introSolved ? 
+      this.renderGame(gameWidth, gameHeight, scaleFactor) : 
+      this.renderOpeningScene(this.state.eventStarted);
+    
   return (
-      <div className="game" 
-        onClick={() => this.handleGameClick()}
-        style={style}>
-      {true && this.state.firstPuzzle &&
-        <FirstPuzzle
-          submitGuess = {(puzzleId, guess) => this.submitGuess(puzzleId, guess)}
-          puzzle = {this.state.firstPuzzle}
-        />  
-      }
-      { false &&
-      <ViewPane
-        viewData = {viewData[this.state.currentView]}
-        viewWidth = {gameWidth}
-        viewHeight = {gameHeight}
-        getRoomItemStatus ={(puzzleName) => this.getRoomItemStatus(puzzleName)}
-        roomItemClicked ={(puzzleName, requiredItems) => this.roomItemClicked(puzzleName, requiredItems)}
-        totalPuzzleCount = {this.state.totalPuzzleCount}
-        newPuzzleCount = {this.state.newPuzzleCount}
-        isInfoMode = {this.state.isInfoMode}
-        scaleFactor = {scaleFactor}
-      />
-      }
-      <Button
-        onClick={() => this.handleModeChange()}
-        modeBtnTop = {viewHeight - 70}
-        modeBtnLeft = {viewWidth -70 }
-        btnLabel = "i"
-      />
-      <Button
-        onClick={() => this.handleMoveViewRight()}
-        modeBtnTop = {viewHeight / 2}
-        modeBtnLeft = {viewWidth -40 }
-        btnLabel = ">"
-      />
-      <Button
-        onClick={() => this.handleMoveViewLeft()}
-        modeBtnTop = {viewHeight / 2}
-        modeBtnLeft = { 10 }
-        btnLabel = "<"
-      />
-      { this.state.isInfoMode &&
-        <ListPane
-          arcData = {this.db.getArcData()}
-          listPaneHeight = {listPaneHeight}
-          listPaneWidth = {listPaneWidth}
-          listPaneLeft = {listPaneLeft}
-          puzzleList = {this.state.viewedPuzzleList}
-          showPuzzle = {(puzzleId) => this.showPuzzle(puzzleId)}
-        />
-      }
-      {false && this.state.isInfoMode &&
-        <ThingsPane
-          infoPaneHeight = {infoPaneHeight}
-          infoPaneWidth = {infoPaneWidth}
-          infoPaneTop = {infoPaneTop}
-          thingsInventory = {this.state.thingsInventory}
-          updateThingsInventory = {(thingId) => this.updateThingsInventory(thingId)}
-        />
-      }
-      { this.state.renderedPuzzle &&
-        <PuzzleDiag
-          puzzDiagLeft = {puzzDiagLeft}
-          puzzDiagWidth = {puzzDiagWidth}
-          puzzDiagHeight = {gameHeight}
-          submitGuess = {(puzzleId, guess) => this.submitGuess(puzzleId, guess)}
-          close = {() => this.closePuzzleDialog()}
-          puzzle = {this.state.renderedPuzzle}
-        />
-      }
-        <div className="phhomelink">
-            <a href="default.aspx">PH 18 Home</a>
-        </div>
+    <div className="game" 
+      onClick={() => this.handleGameClick()}
+      style={style}>
+      {scene}
+      <div className="phhomelink">
+        <a href="default.aspx">PH 18 Home</a>
       </div>
-    );
+    </div>)
   }
 }
 

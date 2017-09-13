@@ -46,7 +46,7 @@ class App extends Component {
   renderStars() {
     let totalStars = 70;
     let stars = [];
-    for (let i=0; i<totalStars; i++) {console.log("For loop: " + Math.random())
+    for (let i=0; i<totalStars; i++) {
     stars.push(this.renderStar(Math.random(), Math.random()*98, Math.random()*98, i));
     }
 
