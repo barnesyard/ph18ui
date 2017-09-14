@@ -21,20 +21,13 @@ class ListPane extends Component {
         search: '',
         collapsedGroups: new Set(),
         filteredArcs: new Set(this.arcFilterTypes()),
-        filteredStatus: new Set(this.statusFilterTypes()),
+        filteredStatus: new Set([ 'Solved', 'Unsolved', 'Meta', 'NonMeta' ]),
     };
   }
 
   arcFilterTypes() {
-    let arcTypes = [];
-    this.props.arcData.map(a => {
-      arcTypes.push(a.descriptor)
-    });
-    return arcTypes;
-  }
-
-  statusFilterTypes() {
-    return [ 'Solved', 'Unsolved' ];
+    // FIXME: meta-meta?
+    return this.props.arcData.map(a => a.descriptor);
   }
 
   groupTypes() {
@@ -52,13 +45,35 @@ class ListPane extends Component {
     this.setState({ search: event.target.value });
   }
 
+  isVisibleFromSearch(puzzle) {
+    return puzzle.PuzzleName.toLowerCase().includes(this.state.search.toLowerCase());
+  }
+
+  isVisibleFromFilteredArcs(puzzle) {
+    return this.state.filteredArcs.has(puzzle.Arc);
+  }
+
+  isVisibleFromFilteredStatus(puzzle) {
+    if (puzzle.Solved) {
+      return this.state.filteredStatus.has("Solved");
+    } else {
+      return this.state.filteredStatus.has("Unsolved");
+    }
+  }
+
+  isVisibleFromFilteredMeta(puzzle) {
+    if (puzzle.IsMetaPuzzle) {
+      return this.state.filteredStatus.has("Meta")
+    } else {
+      return this.state.filteredStatus.has("NonMeta");
+    }
+  }
+
   isVisible(puzzle) {
-    console.log("Verifying the puzzle it visible in the list pane given filters");
-    console.log("The puzzle name is: " + puzzle.PuzzleName);
-    console.log("The puzzle arc is: " + puzzle.Arc);
-    return puzzle.PuzzleName.toLowerCase().includes(this.state.search.toLowerCase())
-        && this.state.filteredArcs.has(puzzle.Arc);
-        //&& this.state.filteredTypes.has(puzzle.Solved ? '☑' : '☐');
+    return this.isVisibleFromSearch(puzzle)
+      && this.isVisibleFromFilteredArcs(puzzle)
+      && this.isVisibleFromFilteredStatus(puzzle)
+      && this.isVisibleFromFilteredMeta(puzzle);
   }
 
   renderSearchBox() {
@@ -77,7 +92,6 @@ class ListPane extends Component {
       <div className="grouptogglepanel"> 
         <div className='groupingtag'>Grouping</div>
         {this.groupTypes().map(g => {
-         console.log('While rendering group by buttons g is: ' +g); 
          return <label key={g}
             className={this.state.groupBy === g ? 'selected' : 'unselected'}>
             {g}
@@ -94,7 +108,7 @@ class ListPane extends Component {
   // the list based on the arc the puzzle is assocatied with.
   renderArcFilterButtons() {
     return (
-      <div className='filtercontrols'> 
+      <div>
         <img className='filtericon' src={filterIcon} alt='filter' />
       {this.props.arcData.map(a => {
          return  <ToggleButton 
@@ -103,12 +117,48 @@ class ListPane extends Component {
           //filterType="arcFilter" 
           filterType="filteredArcs" 
           altText={a.dimension} 
-            img={a.icon}
-            onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)}
+          img={a.icon}
+          onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)}
           />
       })}
       </div>
     )
+  }
+
+  renderSolvedFilterButtons() {
+    return (<div>
+      <ToggleButton key="toggle-unsolved" descriptor="Unsolved" filterType="filteredStatus"
+                    img={filterIcon} // FIXME: Correct Icon
+                    onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)} />
+
+      <ToggleButton key="toggle-solved" descriptor="Solved" filterType="filteredStatus"
+                    img={filterIcon} // FIXME: Correct Icon
+                    onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)} />
+    </div>);
+  }
+
+  renderIsMetaFilterButtons() {
+    return (<div>
+      <ToggleButton key="toggle-meta" descriptor="NonMeta" filterType="filteredStatus"
+                    img={filterIcon} // FIXME: Correct Icon
+                    onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)} />
+
+      <ToggleButton key="toggle-not-meta" descriptor="Meta" filterType="filteredStatus"
+                    img={filterIcon} // FIXME: Correct Icon
+                    onClick={(event, groupName, toggleType) => this.toggle(event, groupName, toggleType)} />
+    </div>);
+  }
+
+  renderFilters() {
+    // FIXME: layout?
+
+    return (
+      <div className='filtercontrols'>
+        {this.renderArcFilterButtons()}
+        {this.renderSolvedFilterButtons()}
+        {this.renderIsMetaFilterButtons()}
+      </div>
+    );
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -121,12 +171,13 @@ class ListPane extends Component {
     switch (this.state.groupBy) {
       case "All": list = this.renderUngroupedPuzzleList(puzzles); break;
       case "Arc": list = this.renderGroupedPuzzleList(puzzles, "Arc"); break;
-      case "Status": list =this.renderGroupedPuzzleList(puzzles, "Status"); break;
+      case "Status": list = this.renderGroupedPuzzleList(puzzles, "Status"); break;
       default : alert(this.state.groupBy);
-      }
-      return <div className='puzzlelist'>
-        {list}
-      </div>
+    }
+
+    return (<div className='puzzlelist'>
+      {list}
+    </div>);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -134,12 +185,28 @@ class ListPane extends Component {
   // will take in an array of puzzles and produce a flat list
   renderUngroupedPuzzleList(puzzles) {
     const filterdPuzzles = puzzles.filter(p => this.isVisible(p));
-    
+
     return (
       <ul className="puzzleItemsList">
         {filterdPuzzles.map(v => this.renderPuzzleListItem(v) )}
       </ul>
     )
+  }
+
+  groupByArc(puzzles) {
+    return puzzles.reduce((groups, puzzle) => {
+      const arc = puzzle.Arc;
+      groups[arc] = groups[arc] || []; // Create empty group if doesn't already exist
+      groups[arc].push(puzzle);        // Add puzzle to arc group
+      return groups;
+    }, {});
+  }
+
+  groupByStatus(puzzles) {
+    let groups = { "Solved": [], "Unsolved": [] };
+    puzzles.forEach(p => p.Solved ? groups.Solved.push(p) : groups.Unsolved.push(p));
+    console.log(groups);
+    return groups;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -148,21 +215,16 @@ class ListPane extends Component {
   // grouped based on toggle settings.
   renderGroupedPuzzleList(puzzles, groupType) {
     console.log("Rendering a grouped list that is grouped by: " + groupType);
-    const byGroup = puzzles.reduce((groups, puzzle) => {
-      console.log("Grouping by: "  + groupType);
-      console.log('The current puzzle name: ' + puzzle.PuzzleName + ' and arc: ' + puzzle.Arc);
-      const g = puzzle[groupType];
-      // if (groupType === 'Status') {
-      //   g = puzzle.Solved ? 'Solved' : 'Unsolved';
-      // }
-        // const g = puzzle[grouping];
-        console.log ("Creating a grouping of " + g);
-        groups[g] ? console.log('groups[g] has value') : console.log('groups[g] has no value');
-        groups[g] = groups[g] || [];
-        groups[g].push(puzzle);
-        console.log("the groups[g] is now: " + groups[g][0].PuzzleName);
-        return groups;
-    }, {});
+
+    let byGroup;
+    if (groupType === "Arc") {
+      byGroup = this.groupByArc(puzzles);
+    } else if (groupType === "Status") {
+      byGroup = this.groupByStatus(puzzles);
+    } else {
+      console.log(`Unknown groupType ${groupType}`);
+      byGroup = {};
+    }
 
     return <div className='groupedlist'>
         {Object.keys(byGroup).sort().map(
@@ -205,7 +267,7 @@ class ListPane extends Component {
   // This method renders a single item within the list.
   renderPuzzleListItem(puzzle) {
     return (
-      <li className="puzzleListItem" >
+      <li className="puzzleListItem" key={`${puzzle.Id || puzzle.PuzzleName}-${puzzle.Solved}`}>
         <PuzzleItem puzzle={puzzle} width={this.props.listPaneWidth} showPuzzle={(p) => this.props.showPuzzle(p)}/>
       </li>
     )
@@ -221,7 +283,7 @@ class ListPane extends Component {
     // The proper way to alter state is to get the current value, modify them
     // and then set state to the modified values. Here oldState is passed in 
     // as the values that are currently in the state so they can be modified.
-    console.log("We are toggling with toggle type: " + toggleType)
+    console.log(`Toggling ${toggleType} / ${groupName}`);
     this.setState(oldState => {
       //oldState.map(s => console.log('This state in the old state is: ' + s));
       const groups = oldState[toggleType];
@@ -232,6 +294,8 @@ class ListPane extends Component {
       }
       return { [toggleType]: groups };
     });
+
+    console.log(this.state);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -249,7 +313,7 @@ class ListPane extends Component {
         <div className="listcontrols">
           {this.renderSearchBox()}
           {this.renderGroupToggles()}
-          {this.renderArcFilterButtons()}
+          {this.renderFilters()}
         </div>
         {this.renderPuzzleList()}
       </div>
