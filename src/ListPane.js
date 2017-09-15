@@ -101,19 +101,19 @@ class ListPane extends Component {
   renderGroupToggles() {
     let fontSize;
     if(this.props.viewIsWide) {
-      fontSize = 'calc(10/9 * 2.2vh)';
+      fontSize = 'calc(10/9 * 2.1vh)';
     } else {
-      fontSize = 'calc(10/16 * 2.2vw)';
+      fontSize = 'calc(10/16 * 2.1vw)';
     }
 
     let style = {fontSize: fontSize}
   return (
       <div className="grouptogglepanel" style={style}> 
-        <div className='groupingtag'>Grouping</div>
+        <div className='groupingtag'>Group</div>
         {this.groupTypes().map(g => {
          return <label key={g}
             className={this.state.groupBy === g ? 'selected' : 'unselected'}>
-            {g}
+            {g==='Arc'? 'Dimension' : g}
             <input type="radio" name="state" value={g} onClick={e => this.handleGroupingToggle(e, g)}/>
           </label> 
         })
@@ -222,7 +222,7 @@ class ListPane extends Component {
   groupByStatus(puzzles) {
     let groups = { "Solved": [], "Unsolved": [] };
     puzzles.forEach(p => p.Solved ? groups.Solved.push(p) : groups.Unsolved.push(p));
-    console.log(groups);
+    // console.log(groups);
     return groups;
   }
 
@@ -231,7 +231,7 @@ class ListPane extends Component {
   // will take in an array of puzzles and produce a list of puzzles that are 
   // grouped based on toggle settings.
   renderGroupedPuzzleList(puzzles, groupType) {
-    console.log("Rendering a grouped list that is grouped by: " + groupType);
+    console.log("Rendering a puzzle list that is GROUPED by: " + groupType);
 
     let byGroup;
     if (groupType === "Arc") {
@@ -257,7 +257,7 @@ class ListPane extends Component {
   // and 'unsovled' the method handles rendering a single group like 'solved'
   // and you loop through all groups to create an entire list with multiple groups.
   renderPuzzleListGroup(groupName, puzzles) {
-    puzzles.map(p => console.log('This is puzzle: ' + p.PuzzleName + ' is in group: ' + groupName))
+    // puzzles.map(p => console.log('This is puzzle: ' + p.PuzzleName + ' is in group: ' + groupName))
     const opened = !this.state.collapsedGroups.has(groupName);
     const state = opened ? "opened" : "closed";
 
@@ -299,7 +299,7 @@ class ListPane extends Component {
     // The proper way to alter state is to get the current value, modify them
     // and then set state to the modified values. Here oldState is passed in 
     // as the values that are currently in the state so they can be modified.
-    console.log(`Toggling ${toggleType} / ${groupName}`);
+    // console.log(`Toggling ${toggleType} / ${groupName}`);
     this.setState(oldState => {
       //oldState.map(s => console.log('This state in the old state is: ' + s));
       const groups = oldState[toggleType];
@@ -311,7 +311,7 @@ class ListPane extends Component {
       return { [toggleType]: groups };
     });
 
-    console.log(this.state);
+    // console.log(this.state);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -342,7 +342,7 @@ export default ListPane;
 class PuzzleItem extends Component {
   
   handleClick(puzzleId) {
-    console.log("Attempting to show a puzzle with ID: "+ puzzleId);
+    // console.log("Attempting to show a puzzle with ID: "+ puzzleId);
     this.props.showPuzzle(puzzleId);
   }
   

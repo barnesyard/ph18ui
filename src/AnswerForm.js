@@ -7,7 +7,8 @@ class AnswerForm extends React.Component {
     event.preventDefault();
 
     const input = document.getElementById("guessInput");
-    console.log("going to guess this: "+input.value);
+    // console.log("going to guess this: "+input.value);
+    // console.log("Only submitting if submitability is set to 0: " + this.props.submitability);
     if (input.value !== '' && this.props.submitability === 0) {
       this.props.submitGuess(input.value);
       input.value = "";
@@ -36,7 +37,7 @@ class AnswerForm extends React.Component {
       <form className={this.props.tag + 'answerForm'} onSubmit={e => this.handleSubmit(e)}>
         <input className="btnSubmit" type="submit" value="Submit" style={{fontSize: this.props.textSize}}/>
         <label className={labelClassName}  style={{fontSize: this.props.textSize}}>
-          <input id="guessInput" className={inputClassName} type="text" placeholder={placeHolderText}/>
+          <input id="guessInput" className={inputClassName} type="text" placeholder={placeHolderText} style={{fontSize: this.props.textSize}}/>
         </label>
       </form>
     );

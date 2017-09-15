@@ -18,7 +18,17 @@ class OpeningScene extends Component {
       submitSize = 'calc(10/16 * 2.7vw)';
     }
 
-return (
+    let submitability = -1;
+    let submissions = [];
+    let lockedTime = 0;
+    console.log("Render the opening scene!");
+    if (this.props.puzzle){
+      submitability = this.props.puzzle.SubmissionAbilityReason;
+      submissions = this.props.puzzle.Submissions;
+      lockedTime = this.props.puzzle.TimeUntilBanRemoved;
+    } 
+
+    return (
       <div className="openingScene">
         <div className='eventTitle'>The Puzzling Zone</div>
         <Button
@@ -34,11 +44,13 @@ return (
         {this.props.eventStarted && 
           <AnswerForm 
             tag='opening'
-            testSize={submitSize} 
-            submitGuess={guess => this.props.submitGuess(this.props.puzzle.Puzzle.PuzzleId, guess)}/>
+            textSize={submitSize} 
+            submitGuess={guess => this.props.submitGuess(this.props.puzzle.Puzzle.PuzzleId, guess)}
+            submitability={submitability}
+            lockedTimeRemaining={lockedTime}/>
         }
-        {this.props.eventStarted && this.props.puzzle &&
-          <SubmittedGuesses tag='opening' submissions={this.props.puzzle.Submissions}/>
+        {this.props.eventStarted &&
+          <SubmittedGuesses tag='opening' submissions={submissions}/>
         }
       </div>     
       );

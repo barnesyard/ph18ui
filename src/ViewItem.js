@@ -15,6 +15,12 @@ class ViewItem extends Component {
   render() {
     let status = this.props.getRoomItemStatus(this.props.puzzleName);
     let grayscale = status === 'unlocked' ? 'grayscale(100%)' : 'grayscale(0%)';
+    // console.log ("The name: " + this.props.name);
+    if (this.props.name.includes('Background')) {
+      // console.log("The name contained background so use grayscale: " + this.props.roomGrayScale);
+      grayscale = 'grayscale(' + Math.round(this.props.roomGrayScale) + '%)';
+      // console.log('Now the grayscale is:' + grayscale);
+    }
     let style = {
       width: this.props.width,
       position: 'absolute',
@@ -23,7 +29,8 @@ class ViewItem extends Component {
       filter: grayscale, // this will allow us to idicate things that have not been clicked
     };
 
-    let className = this.props.name.includes('Background') ? 'viewItem.Background' : 'viewItem';
+    //let className = this.props.name.includes('Background') ? 'viewItem.Background' : 'viewItem';
+    let className = 'viewItem';
     return (
       (status === 'hidden') ?  null : 
       <img src={this.props.svg} 

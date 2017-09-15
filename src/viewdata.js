@@ -80,7 +80,7 @@ import handMirror from './assets/svg/handmirror.svg'
 import maze from './assets/svg/maze.svg'
 import monster from './assets/svg/monster.svg'
 import remote from './assets/svg/remote.svg'
-import simonRobot from './assets/svg/simonrobot.svg'
+import mug from './assets/svg/mug.svg'
 import treeHouse from './assets/svg/treehouse.svg'
 import ufo from './assets/svg/ufo.svg'
 import pinkbox from './assets/svg/pinkbox.svg'
@@ -348,13 +348,13 @@ const viewData = [
         "width": "6%",
       },
       {
-        "svg":simonRobot,
-        "name": "simonRobot",
+        "svg":mug,
+        "name": "mug",
         "puzzleName": "Uncle Simon",
         "requiredItems": [],
-        "top": "43%",
-        "left": "84%",
-        "width": "8%",
+        "top": "55%",
+        "left": "83%",
+        "width": "5%",
       },
       {
         "svg":treeHouse,
@@ -670,7 +670,7 @@ const viewData = [
     "items": [
       {
         "svg":bedroomBkgd,
-        "name": "bedroompuzzles",
+        "name": "bedroomBackground",
         "puzzleName": "",
         "requiredItems": [],
         "top": "0%",

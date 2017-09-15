@@ -26,7 +26,9 @@ class ViewPane extends Component {
           isHidden={viewItem.isHidden}
           puzzleName={viewItem.puzzleName}
           requiredItems={viewItem.requiredItems}
-          key={viewItem.name}/>) 
+          key={viewItem.name}
+          roomGrayScale={this.props.roomGrayScale}
+        />) 
     })
     
     return (

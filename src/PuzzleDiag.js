@@ -82,8 +82,7 @@ class PuzzleDiag extends Component {
     let titleStyle = {fontSize: titleSize}
     return (
       <div className="puzzleDiag" style={style}
-        onClick={(event) => this.handleClick(event)}
-        onKeyPress = {(event) => {this.handleKeyPress(event)}}>
+        onClick={(event) => this.handleClick(event)}>
         <div className="puzzleTitle" style={titleStyle}>{this.props.puzzle.Puzzle.PuzzleName}</div>
         <div className="answersPane">
           <AnswerForm submitGuess={guess => this.props.submitGuess(this.props.puzzle.Puzzle.PuzzleId, guess)} 

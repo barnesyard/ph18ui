@@ -47,6 +47,7 @@ class Game extends Component {
       totalPuzzleCount: 0,
       introSolved: false,
       eventStarted: false,
+      roomGrayScale: 1,
     };
   }
 
@@ -57,7 +58,7 @@ class Game extends Component {
     // Call this method to set puzzle list, it sets the state 
     this.updatePuzzleList();
     // Call update puzzles every minute if the list is empty
-    this.interval = setInterval(this.startEvent.bind(this), 10000);
+    this.interval = setInterval(this.startEvent.bind(this), 30000);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -71,7 +72,7 @@ class Game extends Component {
   startEvent() {
     console.log("Checking to see if the event has started.");
     if (this.state.eventStarted) {
-      console.log("It has started, so removed the callback interval.");
+      //console.log("It has started, so removed the callback interval.");
       clearInterval(this.interval);
     } else {
       this.updatePuzzleList();    
@@ -90,7 +91,7 @@ class Game extends Component {
   // Use this to call the backend to get a list of all the currently unlocked
   // puzzles. It makes an ansynchronous call which updates the state.
   updatePuzzleList() {
-    console.log("Updating the list of puzzles from the DB");
+    console.log("Updating the list of puzzles");
     //Setting the URI as a relative path that works locally and on server too
     let apiPuzzlesURI = 'api/puzzles';
     
@@ -107,47 +108,52 @@ class Game extends Component {
         // It passes the list by reference so no need to return a new list
         this.addThumbnailInfo(puzzles);
 
-        if(puzzles.length > 0) {
-          console.log("The puzzle list is greater than 1, it is: " + puzzles.length)
-          console.log("Seting the event to 'started'");
+        if(puzzles.length > 0 && !this.state.eventStarted) {
+          // console.log("The puzzle list is greater than 1, it is: " + puzzles.length)
+           console.log("Setting the event to 'started'");
           this.setState({eventStarted: true})
         }
         
         //Total haxin but subtract 1 because the intro puzzle is not included
         let totalPuzzleCount = puzzles.length -1;
-        console.log("After getting the puzzle list we are setting the number of unlocked puzzles to: " + totalPuzzleCount);
+        // console.log("After getting the puzzle list we are setting the number of unlocked puzzles to: " + totalPuzzleCount);
         // Create a list of puzzles that have not been viewed and save them in the state
         let viewedPuzzles = this.getViewedPuzzles(puzzles);
-
+        let solvedPuzzlesCount = puzzles.map(p => p.Solved).length;
         let newPuzzleCount = totalPuzzleCount - viewedPuzzles.length;
 
         // SPECIAL CASE: Intro puzzle will only be shown at the beginning so if it has
-        // not been solved then handle showing it here.
-        if(!this.state.introSolved && !this.state.renderedPuzzle){
-          console.log("The intro puzzle has not been solved. Setting it to rendered puzzle state.")
+        if(!this.state.introSolved) {
+          // console.log("The intro puzzle has not been solved.")
+          // not been solved then handle showing it here.
           // Find the intro puzzle by title
           let introTitle = "The World Next Door";
           let introPuzzle = puzzles.find(puzzle => puzzle.PuzzleName === introTitle);
-          // this puzzle should always be in the list but in case it is not, handle that situation
+
           if (introPuzzle) {
+            // console.log("Found the intro puzzle in the list of puzzles, setting its solved state is: " + introPuzzle.Solved);
             this.setState({introSolved: introPuzzle.Solved});
-            //Was it just solved? Handle that situation since we update puzzle list after each submission
             if (introPuzzle.Solved ) {
+              // console.log("Closing the puzzle dialog to set the rendered puzzle null.");
               this.closePuzzleDialog();
             } else { 
-              this.showPuzzle(introPuzzle.PuzzleId)
+              if(!this.state.renderedPuzzle) {
+                // console.log("Rendering the intro puzzle since it's state says it is not solved.");
+                this.showPuzzle(introPuzzle.PuzzleId)
+              }
             }
           } else {
             // we didn't expect this so log something in the cosole
             console.log("Unable to find the intro puzzle in list using name: " + introTitle);
           }
         }
-        console.log("Setting the state for the list of puzzles and the total puzzle count");
+        
         this.setState({ 
           totalPuzzleCount: totalPuzzleCount,
           newPuzzleCount: newPuzzleCount,
           viewedPuzzleList: viewedPuzzles,
           puzzleList: puzzles,
+          roomGrayScale: solvedPuzzlesCount*100,
         });
       } else {
         // ERROR HANDLING
@@ -166,12 +172,12 @@ class Game extends Component {
       // This assumes all puzzles have pdf files. Need to see if there is htm or html files
       let pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('pdf', 'png');
       if (pdfPath.includes('.htm')) {
-        console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
+        // console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
         pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('htm', 'png');
         //console.log('The pngName is ' + pngName);
       }
       if (pdfPath.includes('.aspx')) {
-        console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
+        // console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
         pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('aspx', 'png');
         //console.log('The pngName is ' + pngName);
       }
@@ -242,7 +248,7 @@ class Game extends Component {
     }
 
     if(puzzle) {
-      console.log("Opening puzzle with puzzleID: " + puzzle.PuzzleId)
+      // console.log("Opening puzzle with puzzleID: " + puzzle.PuzzleId)
       this.showPuzzle(puzzle.PuzzleId);
     }
   }
@@ -254,7 +260,7 @@ class Game extends Component {
     console.log("Opening puzzle dialog for: " + puzzleId)
     let apiCall = new XMLHttpRequest(); 
     let phURI = 'api/puzzles/' + puzzleId;
-    console.log("The URL to call: " + phURI);
+    // console.log("The URL to call: " + phURI);
     apiCall.open('GET', phURI, true);
     apiCall.onload = () => {
     if (apiCall.status >= 200 && apiCall.status < 400) {
@@ -339,8 +345,8 @@ class Game extends Component {
 
   getViewedPuzzles(puzzles) {
     const puzzleList = puzzles.filter(puz => this.hasBeenViewed(puz));
-    console.log("The number of puzzles to be in the viewed list: " + puzzleList.length);
-    puzzleList.map(p => console.log("This puzzle is in the list to be viewed: " + p.PuzzleName))
+    //console.log("The number of puzzles to be in the viewed list: " + puzzleList.length);
+    //puzzleList.map(p => console.log("This puzzle is in the list to be viewed: " + p.PuzzleName))
     return puzzleList;
   }
 
@@ -396,6 +402,7 @@ class Game extends Component {
           roomItemClicked ={(puzzleId, requiredItems) => this.roomItemClicked(puzzleId, requiredItems)}
           isInfoMode = {this.state.isInfoMode}
           scaleFactor = {scaleFactor}
+          roomGrayScale = {this.state.roomGrayScale}
         />
         }
         <Button
@@ -481,7 +488,9 @@ class Game extends Component {
       height: gameHeight + 'px',
       postion: 'relative',
     };
-    console.log("The value of this.state.introSolved: " + this.state.introSolved);
+    // console.log("The value of this.state.introSolved: " + this.state.introSolved);
+
+    // If the state says "The intro is not solved" we render the opening scene.
     let scene = this.state.introSolved ? 
       this.renderGame(gameWidth, gameHeight, scaleFactor, viewIsWide) : 
       this.renderOpeningScene(this.state.eventStarted, viewIsWide);
