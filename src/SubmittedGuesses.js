@@ -3,8 +3,19 @@ import './index.css';
 
 class SubmittedGuesses extends React.Component {
   render() { 
+    let subCount=this.props.submissions.length;
+    // The list of submissions will be empty with no guesses
+    let visibility = 'hidden'
+    if (subCount > 0 ) {
+      visibility = 'visible'; 
+    }
+    let style = {
+      visibility: visibility,
+      fontSize: this.props.textSize,
+    }
+
     return (
-      <div className="submissions">
+      <div className={this.props.tag + "submissions"} style={style}>
         <div className="submissionsLabel">
           Submission History
         </div>
@@ -21,6 +32,10 @@ class SubmittedGuesses extends React.Component {
       </div>
     );
   }
+}
+
+SubmittedGuesses.defaultProps = {
+  tag: ''
 }
 
 export default  SubmittedGuesses;

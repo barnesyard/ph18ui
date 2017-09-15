@@ -17,12 +17,25 @@ body {
   background: transparent;
 }
 .firstPuzzle {
-  position: absolute;
-  top: 10%;
+  position: relative;
   left: 30%;
+  height: 70%;
+  width: 41%;
+}
+.openinganswerForm {
+  position: relative;
+  left: 40%;
+  width: 29%;
+  margin-top: 2%;
+}
+.openingsubmissions {
+  position: absolute;
+  width: 33%;
+  bottom: 18%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .eventTitle {
-  position: absolute;
+  position: relative;
   text-align: center;
   color: white;
   font-weight: bold;
@@ -44,7 +57,7 @@ body {
   bottom: 10px;
   right: 13%;
   padding: 3px;
-  background: rgba(23, 148, 67, 0.70);
+  background: rgba(208, 0, 0, 0.69);
   color: rgba(255, 255, 255, 0.80);
   font-size: 20px;
   font-weight: bold;
@@ -52,13 +65,13 @@ body {
 
 .phhomelink {
   position: absolute;
-  bottom: 10px;
+  top: 10px;
   left: 10px;
-}
-.puzzleDiag {
-  background-color: rgba(60, 60, 60, .95);
-  position: absolute;
-  border-radius: 12px;
+  border-radius: 5px;
+  padding: 3px;
+  background: rgba(0, 200, 0, 0.50);
+  font-size: 15px;
+  font-family: sans-serif;
 }
 .listPane {
   background: transparent;
@@ -73,18 +86,19 @@ body {
 .searchdiv{
   position: relative;
   width: 100%;
-  height: 25%
+  height: 25%;
+  background-color: rgba(255,255,255,.2);
 }
 .searchbox{
   position: absolute;
   width: 95%;
   margin: 5px;
-  font-size: 150%;
+  font-size: 1.4vw;
 }
 .searchicon{
   position: absolute;
-  top: 16%;
-  right: 4%;  
+  top: 22%;
+  right: 3%;  
   width: 8%;
 }
 .grouptogglepanel{
@@ -93,7 +107,7 @@ body {
   height: 25%;
   top: 0%;
   color: white;
-  font-size: 150%;
+  margin-top: 3%;
 }
 .groupingtag{
   position: relative;
@@ -106,7 +120,6 @@ body {
   width: 100%;
   height: 50%;
   top: 2%;
-  background-color: rgba(255,255,255,.2);
   margin: 0 0 0 0;
 }
 .arcfiltercontrols{
@@ -114,18 +127,16 @@ body {
   width: 100%;
   height: 50%;
   bottom: 2%;
-  background-color: rgba(255,255,255,.2);
   margin: 0 0 0 0;
 }
 .statusfiltercontrols{
   position: relative;
-  height: 50%;
+  display: inline;
   bottom: 2%;
-  background-color: rgba(255,255,0,.2);
 }
 .metafiltercontrols{
   position: relative;
-  height: 50%;
+  display: inline;
   bottom: 5%;
   background-color: rgba(255,0,255,.2);
 }
@@ -140,11 +151,12 @@ body {
   position: relative;
   width: 100%;
   color: white;
-  font-size: 120%;
+  font-size: 1.4vw;
   top: 0%;
 }
 .groupedlist{
   position: relative;
+  margin-top: 3%;
 }
 .grouping{
   position: relative;
@@ -154,6 +166,7 @@ body {
   position: relative;
   width: 100%;
   float: left;
+  cursor: pointer;
 }
 input[type="radio"] {
   position: absolute;
@@ -230,10 +243,11 @@ li.thingListItem {
 }
 .btn {
   position: absolute;
-  width: 30px;
-  height: 30px;
   border-radius: 8px;
   background: transparent;
+  padding: 1px;
+  height: 35px;
+  width: 35px;
 }
 .pdfViewer {
   top: 50px;
@@ -246,18 +260,6 @@ li.thingListItem {
   font-size: 3vmin;
   font-weight: bold;
   overflow: hidden;
-}
-.btnSubmit {
-  width: 100px; 
-  height: 40px; 
-  font-size: 150%; 
-  background: limegreen; 
-  color: white;
-  position: absolute;
-  top: 12px;
-  left: 270px;
-  text-align: center;
-  border-radius: 15px;
 }
 .toggleBtn {
   float: left;
@@ -287,21 +289,107 @@ li.thingListItem {
   height: 100%;
   object-fit: scale-down;
 }
-.txtInputLabel {
-  left: 30px;
-  top: 15px;
-  position: relative;
+.puzzleDiag {
+  background-color: rgba(60, 60, 60, .95);
+  position: absolute;
+  border-radius: 12px;
 }
+.puzzleTitle {
+  text-align: center;
+  color: white;
+  font-size: 300%;
+  width: 100%;
+}
+.answersPane{
+  position: relative;
+  width: 45%;
+  height: 90%;
+  left: 5%;
+}
+.answerForm {
+  position: relative;
+  width: 100%;
+}
+.btnSubmit {
+  position: relative;
+  width: 23%; 
+  height: 55%; 
+  background: limegreen; 
+  color: white;
+  top: 12%;
+  left: 5%;
+  text-align: center;
+  border-radius: 10px;
+}
+.txtInputLabel {
+  position: relative;
+  width: 69%;
+  height: 55%;
+  left: 0%;
+  top: 5%;
+}
+.txtInputLabeltemplock {
+  position: relative;
+  width: 69%;
+  height: 55%;
+  left: 0%;
+  top: 5%;
+  background-color: #D3CF00;
+}  
+.txtInputLabelpermanentlock {
+  position: relative;
+  width: 69%;
+  height: 55%;
+  left: 0%;
+  top: 5%;
+  background-color: #FA0000;
+}  
 .txtInput {
-  width: 200px;
-  height: 20px;
+  width: 99%;
+  border: 0;
+}
+.txtInputtemplock {
+  width: 99%;
+  border: 0;
+  background-color: #FBFEC3;
+}
+.txtInputpermanentlock {
+  width: 99%;
+  border: 0;
+  background-color: #DE9191;
+}
+.responseBox{
+  position: relative;
+  width: 100%;
+  height: 15%;
+  margin-top: 3%;
+  margin-bottom: 7%;
+}
+.responseBoxText{
+  position: relative;
+  color: #1A1A1A;
+  text-align: left;
+  border-width: medium;
+  border-style: solid;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-left: 3px;
+  padding-right: 3px;
+  overflow: auto;
+}
+.correct .responseBoxText{
+  background-color: #91DE91;
+  border-color: green;
+}
+.incorrect .responseBoxText{
+  background-color: #DE9191;
+  border-color: red;
 }
 .submissions{
   position: relative;
-  width: 350px;
-  height: 50%;
-  top: 170px;
-  left: 20px;
+  width: 100%;
+  height: 70%;
+  margin-top: 3%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .submissionsLabel{
   position: relative;
@@ -321,86 +409,4 @@ li.thingListItem {
   overflow: auto;
   font-style: italic;
 }
-.answerForm {
-    top: 10px;
-    left: 10px;
-}
-.openinganswerForm {
-  position: absolute;
-  top: 85%;
-  left: 38%;
-}
-.answerBox{
-  position: relative;
-  width: 350px;
-  top: 30px;
-  left: 20px;
-}
-.answerBoxLabel{
-  position: relative;
-  color: gray;
-  text-align: left;
-  font-weight: bold;
-}
-.solved .answerBoxLabel{
-  color: green;
-}
-.answerBoxText{
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-style: solid;
-  border-color: gray;
-  border-width: medium;
-  color: white;
-  overflow: auto;
-  font-style: italic;
-}
-.solved .answerBoxText{
-  border-color: green;
-}
 
-.responseBox{
-  position: relative;
-  width: 350px;
-  top: 30px;
-  left: 20px;
-}
-.responseBoxLabel{
-  position: relative;
-  color: gray;
-  text-align: left;
-  font-weight: bold;
-}
-.solved .responseBoxLabel{
-  color: green;
-}
-.responseBoxText{
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-style: solid;
-  border-color: gray;
-  border-width: medium;
-  color: white;
-  overflow: auto;
-  font-style: italic;
-}
-.solved .answerBoxText{
-  border-color: green;
-}
-
-
-.numPages{
-  color: white;
-  text-align: center;
-  font-size: 3vmin;
-  font-weight: bold;  
-  position: relative;
-}
-
-.puzzleTitle {
-  text-align: center;
-  color: white;
-  font-size: 300%;
-}

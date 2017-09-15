@@ -13,17 +13,22 @@ class PuzzleResponse extends React.Component {
       responseText = this.props.puzzle.Submissions[0].Response ? this.props.puzzle.Submissions[0].Response : 'Invalid';
       visibility = 'visible'; 
     }
+    let solvedTag = '';
+    if(this.props.puzzle.Puzzle.Solved) {
+      solvedTag = 'correct';
+    } else {
+      solvedTag = 'incorrect';
+    }
+
     let style = {
       visibility: visibility,
+      fontSize: this.props.textSize,
      };
    
     return (
-      <div className="responseBox" style={style}>
-        <div className="responseBoxLabel">
-          Response
-          <div className="responseBoxText">
-            {responseText}
-          </div>
+      <div className={`responseBox ${solvedTag}`} style={style}>
+        <div className="responseBoxText">
+          {responseText}
         </div>
       </div>
     );

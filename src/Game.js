@@ -7,6 +7,11 @@ import Button from './Button.js';
 import OpeningScene from './OpeningScene.js';
 import PuzzleDiag from './PuzzleDiag.js';
 import { Database } from './Database.js';
+import leftArrowIcon from './assets/img/leftarrow.svg';
+import rightArrowIcon from './assets/img/rightarrow.svg';
+import openInfoIcon from './assets/img/openinfo.svg';
+import closeInfoIcon from './assets/img/closeinfo.svg';
+import homeIcon from './assets/img/home.svg';
 
 // Data that will not be pulled from the database should be pulled into the UI here
 import { viewData } from './viewdata.js';
@@ -51,8 +56,8 @@ class Game extends Component {
   componentDidMount(){
     // Call this method to set puzzle list, it sets the state 
     this.updatePuzzleList();
-    //TODO Remove this once the mechanism for the opening event is known
-    this.interval = setInterval(this.startEvent.bind(this), 100);
+    // Call update puzzles every minute if the list is empty
+    this.interval = setInterval(this.startEvent.bind(this), 10000);
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -64,9 +69,13 @@ class Game extends Component {
 
   //TODO Remove this once the mechanism for the opening event is known
   startEvent() {
-    console.log("Starting the event.");
-    clearInterval(this.interval);
-    this.setState({eventStarted: true,})
+    console.log("Checking to see if the event has started.");
+    if (this.state.eventStarted) {
+      console.log("It has started, so removed the callback interval.");
+      clearInterval(this.interval);
+    } else {
+      this.updatePuzzleList();    
+    }
   }
 
   updateThingsInventory(thingId) {
@@ -88,7 +97,7 @@ class Game extends Component {
     let apiPuzzles = new XMLHttpRequest();   
     apiPuzzles.open('GET', apiPuzzlesURI, true);
     apiPuzzles.onload = () => {
-      if (apiPuzzles.status >= 200 && apiPuzzles.status < 400) {
+      if (apiPuzzles.status >= 200 && apiPuzzles.status < 400 ) {
         // Success!
         let puzzles = JSON.parse(apiPuzzles.responseText);
         // We have the list of puzzles now. It is the right time to add stuff
@@ -97,8 +106,15 @@ class Game extends Component {
         // Add path to thumbnails to each item in the puzzle list
         // It passes the list by reference so no need to return a new list
         this.addThumbnailInfo(puzzles);
+
+        if(puzzles.length > 0) {
+          console.log("The puzzle list is greater than 1, it is: " + puzzles.length)
+          console.log("Seting the event to 'started'");
+          this.setState({eventStarted: true})
+        }
         
-        let totalPuzzleCount = puzzles.length;
+        //Total haxin but subtract 1 because the intro puzzle is not included
+        let totalPuzzleCount = puzzles.length -1;
         console.log("After getting the puzzle list we are setting the number of unlocked puzzles to: " + totalPuzzleCount);
         // Create a list of puzzles that have not been viewed and save them in the state
         let viewedPuzzles = this.getViewedPuzzles(puzzles);
@@ -107,7 +123,7 @@ class Game extends Component {
 
         // SPECIAL CASE: Intro puzzle will only be shown at the beginning so if it has
         // not been solved then handle showing it here.
-        if(!this.state.introSolved){
+        if(!this.state.introSolved && !this.state.renderedPuzzle){
           console.log("The intro puzzle has not been solved. Setting it to rendered puzzle state.")
           // Find the intro puzzle by title
           let introTitle = "The World Next Door";
@@ -150,12 +166,12 @@ class Game extends Component {
       // This assumes all puzzles have pdf files. Need to see if there is htm or html files
       let pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('pdf', 'png');
       if (pdfPath.includes('.htm')) {
-        //console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
+        console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
         pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('htm', 'png');
         //console.log('The pngName is ' + pngName);
       }
       if (pdfPath.includes('.aspx')) {
-        //console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
+        console.log("The Puzzle URL for puzzle that doesn't use PDF: " + pdfPath);
         pngName = pdfPath.substring(lastSlash+1, pdfPath.length).replace('aspx', 'png');
         //console.log('The pngName is ' + pngName);
       }
@@ -235,7 +251,7 @@ class Game extends Component {
   // This method will open the puzzle dialog when exposed from a room or 
   // from the puzzle list. Call the DB to get all puzzle details used in dialog.
   showPuzzle(puzzleId) {
-    console.log("Going to show another puzzle dialog.")
+    console.log("Opening puzzle dialog for: " + puzzleId)
     let apiCall = new XMLHttpRequest(); 
     let phURI = 'api/puzzles/' + puzzleId;
     console.log("The URL to call: " + phURI);
@@ -328,25 +344,28 @@ class Game extends Component {
     return puzzleList;
   }
 
-  renderOpeningScene(eventStarted) {
-    if (this.state.renderedPuzzle) {
-      return (
-        <OpeningScene
-          submitGuess = {(puzzleId, guess) => this.submitGuess(puzzleId, guess)}
-          puzzle = {this.state.renderedPuzzle}
-          eventStarted = {eventStarted}
-        />  
-      )
-    }
+  renderOpeningScene(eventStarted, viewIsWide) {
+    //console.log("passing the puzzle to opening scene: " + this.state.renderedPuzzle.Puzzle.PuzzleName);
+    return (
+      <OpeningScene
+        submitGuess = {(puzzleId, guess) => this.submitGuess(puzzleId, guess)}
+        puzzle = {this.state.renderedPuzzle}
+        eventStarted = {eventStarted}
+        viewIsWide = {viewIsWide}
+        homeIcon = {homeIcon}
+      />  
+    )
   }
 
-  renderGame(gameWidth, gameHeight, scaleFactor) {
+  renderGame(gameWidth, gameHeight, scaleFactor, viewIsWide) {
     // Let the Game object manage the size of the divs that are its children
-    let viewWidth, viewHeight;
+    let viewWidth, viewHeight, modeIcon;
     if (this.state.isInfoMode) {
+      modeIcon = closeInfoIcon;
       viewWidth = .8 * gameWidth;
       viewHeight = .8 * gameHeight;
     } else {
+      modeIcon = openInfoIcon;
       viewWidth = gameWidth;
       viewHeight = gameHeight;
     }
@@ -380,26 +399,37 @@ class Game extends Component {
         />
         }
         <Button
+          onClick={() => {window.location.href="default.aspx"}}
+          modeBtnTop = {10}
+          modeBtnLeft = {10}
+          btnLabel = "H"
+          img={homeIcon}
+        />
+        <Button
           onClick={() => this.handleModeChange()}
           modeBtnTop = {viewHeight - 70}
           modeBtnLeft = {viewWidth -70 }
           btnLabel = "i"
+          img={modeIcon}
         />
         <Button
           onClick={() => this.handleMoveViewRight()}
           modeBtnTop = {viewHeight / 2}
           modeBtnLeft = {viewWidth -40 }
           btnLabel = ">"
+          img = {rightArrowIcon}
         />
         <Button
           onClick={() => this.handleMoveViewLeft()}
           modeBtnTop = {viewHeight / 2}
           modeBtnLeft = { 10 }
           btnLabel = "<"
+          img = {leftArrowIcon}
         />
         {this.state.isInfoMode &&
           <ListPane
             arcData = {this.db.getArcData()}
+            viewIsWide = {viewIsWide}
             listPaneHeight = {listPaneHeight}
             listPaneWidth = {listPaneWidth}
             listPaneLeft = {listPaneLeft}
@@ -418,6 +448,7 @@ class Game extends Component {
         }
         { this.state.renderedPuzzle &&
           <PuzzleDiag
+            viewIsWide = {viewIsWide}
             puzzDiagLeft = {puzzDiagLeft}
             puzzDiagWidth = {puzzDiagWidth}
             puzzDiagHeight = {gameHeight}
@@ -432,12 +463,14 @@ class Game extends Component {
 
 
   render() {
-    let gameHeight, gameWidth, scaleFactor;
+    let gameHeight, gameWidth, scaleFactor, viewIsWide;
     // Handle resizing so that the game div stays in a 16:9 ratio
     if ((this.props.appWidth / this.props.appHeight) > 16 / 9 ) {
+      viewIsWide = true;
       gameWidth = this.props.appHeight / 9 * 16;
       gameHeight = this.props.appHeight;
     } else {
+      false;
       gameHeight = this.props.appWidth / 16 * 9;
       gameWidth = this.props.appWidth;
     }
@@ -450,17 +483,14 @@ class Game extends Component {
     };
     console.log("The value of this.state.introSolved: " + this.state.introSolved);
     let scene = this.state.introSolved ? 
-      this.renderGame(gameWidth, gameHeight, scaleFactor) : 
-      this.renderOpeningScene(this.state.eventStarted);
+      this.renderGame(gameWidth, gameHeight, scaleFactor, viewIsWide) : 
+      this.renderOpeningScene(this.state.eventStarted, viewIsWide);
     
   return (
     <div className="game" 
       onClick={() => this.handleGameClick()}
       style={style}>
       {scene}
-      <div className="phhomelink">
-        <a href="default.aspx">PH 18 Home</a>
-      </div>
     </div>)
   }
 }

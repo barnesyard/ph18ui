@@ -3,8 +3,9 @@ import './index.css';
 import Button from './Button.js';
 import AnswerForm from './AnswerForm.js';
 import SubmittedGuesses from './SubmittedGuesses.js';
-import PuzzleAnswer from './PuzzleAnswer.js';
 import PuzzleResponse from './PuzzleResponse.js';
+import closeIcon from './assets/img/close.svg';
+import openIcon from './assets/img/open.svg';
 
 class PuzzleDiag extends Component {
   
@@ -22,6 +23,16 @@ class PuzzleDiag extends Component {
     e.stopPropagation();
   }
 
+  handleKeyPress(e) {
+    console.log("the key pressed: " + e.key)
+    if(e.key === 'escape') {
+      this.props.close();
+    }
+  }
+
+  handleOpenPdf() {
+    window.open(this.props.puzzle.Puzzle.PuzzleURL);
+  }
   handleClose() {
     this.props.close();
   }
@@ -57,25 +68,46 @@ class PuzzleDiag extends Component {
       width: pdfWidth + 'px',
     };
 
+    let titleSize, submitSize, summarySize;
+    if(this.props.viewIsWide) {
+      titleSize = 'calc(10/9 * 5vh)';
+      submitSize = 'calc(10/9 * 2.4vh)';
+      summarySize = 'calc(10/9 * 2.1vh)';
+    } else {
+      titleSize = 'calc(10/16 * 5vw)';
+      submitSize = 'calc(10/16 * 2.4vw)';
+      summarySize = 'calc(10/16 * 2.1vw)';
+    }
+
+    let titleStyle = {fontSize: titleSize}
     return (
       <div className="puzzleDiag" style={style}
-        onClick={(event) => this.handleClick(event)}>
-        <div className="puzzleTitle">{this.props.puzzle["Puzzle"].PuzzleName}</div>
-        <AnswerForm submitGuess={guess => this.props.submitGuess(this.props.puzzle.Puzzle.PuzzleId, guess)}/>
-        <PuzzleResponse puzzle={this.props.puzzle}/>
-        <PuzzleAnswer puzzle={this.props.puzzle}/>
-        <SubmittedGuesses submissions={this.props.puzzle.Submissions}/>
+        onClick={(event) => this.handleClick(event)}
+        onKeyPress = {(event) => {this.handleKeyPress(event)}}>
+        <div className="puzzleTitle" style={titleStyle}>{this.props.puzzle.Puzzle.PuzzleName}</div>
+        <div className="answersPane">
+          <AnswerForm submitGuess={guess => this.props.submitGuess(this.props.puzzle.Puzzle.PuzzleId, guess)} 
+            textSize={submitSize} 
+            submitability={this.props.puzzle.SubmissionAbilityReason}
+            lockedTimeRemaining={this.props.puzzle.TimeUntilBanRemoved}/>
+          <PuzzleResponse puzzle={this.props.puzzle} textSize={summarySize}/>
+          <SubmittedGuesses 
+            submissions={this.props.puzzle.Submissions} 
+            textSize={summarySize}/>
+        </div>
         <Button key="openPdfButton"
           onClick={() => this.handleOpenPdf()}
           modeBtnTop={10}
           modeBtnLeft={this.props.puzzDiagWidth - 100 }
           btnLabel="^"
+          img={openIcon}
         />
         <Button key="closeButton"
           onClick={() => this.handleClose()}
           modeBtnTop={10}
           modeBtnLeft={this.props.puzzDiagWidth - 40 }
           btnLabel="X"
+          img={closeIcon}
         />
         <div className="pdfViewer" style={pdfStyle} onClick={() => this.handleOpenPdf()}>
           <img src={pngFullPath} alt='puzzleIcon' style={{width: '95%'}} />

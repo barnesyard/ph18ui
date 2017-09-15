@@ -15,11 +15,12 @@ import goldBricks from './assets/svg/goldbricks.svg'
 import soupBowl from './assets/svg/soupbowl.svg'
 import wasteBasket from './assets/svg/wastebasket.svg'
 import waterBottle from './assets/svg/waterbottle.svg'
+import blackbox from './assets/svg/blackbox.svg'
 
 //Bedroom items
 import bedroomBkgd from './assets/svg/PHRoomBedroomBackground.svg'
 import apple from './assets/svg/apple.svg'
-import arrow from './assets/svg/arrow.svg'
+import leprechaunpainting from './assets/svg/leprechaunpainting.svg'
 import doll from './assets/svg/doll.svg'
 import dollHouse from './assets/svg/dollhouse.svg'
 import dream from './assets/svg/dream.svg'
@@ -31,12 +32,14 @@ import seeNoEvil from './assets/svg/seenoevil.svg'
 import speakNoEvil from './assets/svg/speaknoevil.svg'
 import standingMirror from './assets/svg/standingmirror.svg'
 import zoo from './assets/svg/zoo.svg'
+import goldbox from './assets/svg/goldbox.svg'
 
 //Door items
 import doorBkgd from './assets/svg/PHRoomDoorBackground.svg'
 import exit from './assets/svg/exit.svg'
 import box from './assets/svg/box.svg'
 import chameleon from './assets/svg/chameleon.svg'
+import changingOfTheGuard from './assets/svg/changingoftheguard.svg'
 import crossing from './assets/svg/rrcrossing.svg'
 import duck from './assets/svg/duck.svg'
 import hardhat from './assets/svg/hardhat.svg'
@@ -45,6 +48,8 @@ import jacket from './assets/svg/jacket.svg'
 import pottedPlant from './assets/svg/pottedplant.svg'
 import wallClock from './assets/svg/wallclock.svg'
 import waterCooler from './assets/svg/watercooler.svg'
+import bluebox from './assets/svg/bluebox.svg'
+import sixlocks from './assets/svg/sixlocks.svg'
 
 //Entertainment items
 import entertainmentBkgd from './assets/svg/PHRoomEntertainmentBackground.svg'
@@ -59,8 +64,10 @@ import microphone from './assets/svg/microphone.svg'
 import music from './assets/svg/music.svg'
 import phonograph from './assets/svg/phonograph.svg'
 import rug from './assets/svg/rug.svg'
-import trophy from './assets/svg/trophy.svg'
+import lineman from './assets/svg/lineman.svg'
 import tv from './assets/svg/tv.svg'
+import greenbox from './assets/svg/greenbox.svg'
+import violetbox from './assets/svg/violetbox.svg'
 
 //Sitting items
 import sittingBkgd from './assets/svg/PHRoomSittingBackground.svg'
@@ -74,7 +81,10 @@ import maze from './assets/svg/maze.svg'
 import monster from './assets/svg/monster.svg'
 import remote from './assets/svg/remote.svg'
 import simonRobot from './assets/svg/simonrobot.svg'
+import treeHouse from './assets/svg/treehouse.svg'
 import ufo from './assets/svg/ufo.svg'
+import pinkbox from './assets/svg/pinkbox.svg'
+
 
 const viewData = [
   {
@@ -101,7 +111,7 @@ const viewData = [
       {
         "svg":deathMask,
         "name": "deathMask",
-        "puzzleName": "Deaths-Head Revisited",
+        "puzzleName": "Deaths Head Revisited",
         "requiredItems": [],
         "top": "16%",
         "left": "53%",
@@ -119,7 +129,7 @@ const viewData = [
       {
         "svg":purpleArt,
         "name": "purpleArt",
-        "puzzleName": "Purple Testament",
+        "puzzleName": "The Purple Testament",
         "requiredItems": [],
         "top": "18%",
         "left": "82%",
@@ -135,12 +145,21 @@ const viewData = [
         "width": "38%",
       },
       {
+        "svg":blackbox,
+        "name": "blackbox",
+        "puzzleName": "The Jeopardy Room (Black Lock)",
+        "requiredItems": [],
+        "top": "85%",
+        "left": "37%",
+        "width": "9%",
+      },
+      {
         "svg":cookBook,
         "name": "cookBook",
         "puzzleName": "To Serve Man",
         "requiredItems": [],
         "top": "70%",
-        "left": "76%",
+        "left": "80%",
         "width": "10%",
       },
       {
@@ -212,16 +231,16 @@ const viewData = [
         "puzzleName": "Lost and Found",
         "requiredItems": [],
         "top": "78%",
-        "left": "34%",
-        "width": "7%",
+        "left": "30%",
+        "width": "6%",
       },
       {
         "svg":waterBottle,
         "name": "waterBottle",
         "puzzleName": "Aqua Vita",
         "requiredItems": [],
-        "top": "67%",
-        "left": "74%",
+        "top": "71%",
+        "left": "77%",
         "width": "2%",
       },
     ]
@@ -250,7 +269,7 @@ const viewData = [
       {
         "svg":chess,
         "name": "chess",
-        "puzzleName": "King Nine Will Not Return",
+        "puzzleName": "The Once and Future King",
         "requiredItems": [],
         "top": "84%",
         "left": "55%",
@@ -270,17 +289,17 @@ const viewData = [
         "name": "dice",
         "puzzleName": "Two",
         "requiredItems": [],
-        "top": "78%",
-        "left": "2%",
-        "width": "11%",
+        "top": "53%",
+        "left": "18%",
+        "width": "7%",
       },
       {
         "svg":handMirror,
         "name": "handMirror",
         "puzzleName": "The Mirror",
         "requiredItems": [],
-        "top": "59%",
-        "left": "18%",
+        "top": "65%",
+        "left": "28%",
         "width": "7%",
       },
       {
@@ -290,7 +309,7 @@ const viewData = [
         "requiredItems": [],
         "top": "9%",
         "left": "11%",
-        "width": "15%",
+        "width": "19%",
       },
       {
         "svg":exam,
@@ -311,6 +330,15 @@ const viewData = [
         "width": "5.5%",
       },
       {
+        "svg":pinkbox,
+        "name": "pinkbox",
+        "puzzleName": "The Jeopardy Room (Pink Lock)",
+        "requiredItems": [],
+        "top": "81%",
+        "left": "16%",
+        "width": "12%",
+      },
+      {
         "svg":remote,
         "name": "remote",
         "puzzleName": "Button, Button",
@@ -324,9 +352,18 @@ const viewData = [
         "name": "simonRobot",
         "puzzleName": "Uncle Simon",
         "requiredItems": [],
-        "top": "57%",
-        "left": "83%",
-        "width": "10%",
+        "top": "43%",
+        "left": "84%",
+        "width": "8%",
+      },
+      {
+        "svg":treeHouse,
+        "name": "treeHouse",
+        "puzzleName": "The Shelter",
+        "requiredItems": [],
+        "top": "56%",
+        "left": "5%",
+        "width": "9%",
       },
       {
         "svg":ufo,
@@ -335,7 +372,7 @@ const viewData = [
         "requiredItems": [],
         "top": "6%",
         "left": "74%",
-        "width": "23%",
+        "width": "20%",
       },
     ]
   },
@@ -361,6 +398,15 @@ const viewData = [
         "width": "10%",
       },
       {
+        "svg":bluebox,
+        "name": "bluebox",
+        "puzzleName": "The Jeopardy Room (Blue Lock)",
+        "requiredItems": [],
+        "top": "83%",
+        "left": "51%",
+        "width": "13%",
+      },
+      {
         "svg":box,
         "name": "box",
         "puzzleName": "What's in the Box",
@@ -374,9 +420,18 @@ const viewData = [
         "name": "chameleon",
         "puzzleName": "Chameleon",
         "requiredItems": [],
-        "top": "13%",
+        "top": "11%",
         "left": "-1%",
-        "width": "19%",
+        "width": "17%",
+      },
+      {
+        "svg":changingOfTheGuard,
+        "name": "changingOfTheGuard",
+        "puzzleName": "The Changing of the Guard",
+        "requiredItems": [],
+        "top": "23%",
+        "left": "15%",
+        "width": "27%",
       },
       {
         "svg":crossing,
@@ -410,9 +465,9 @@ const viewData = [
         "name": "homewood",
         "puzzleName": "Walking Distance",
         "requiredItems": [],
-        "top": "29%",
-        "left": "5%",
-        "width": "25%",
+        "top": "59%",
+        "left": "1%",
+        "width": "17%",
       },
       {
         "svg":jacket,
@@ -428,9 +483,18 @@ const viewData = [
         "name": "pottedPlant",
         "puzzleName": "The Jungle",
         "requiredItems": [],
-        "top": "45%",
-        "left": "25%",
-        "width": "12%",
+        "top": "54%",
+        "left": "29%",
+        "width": "10%",
+      },
+      {
+        "svg":sixlocks,
+        "name": "sixlocks",
+        "puzzleName": "The Jeopardy Room (Red Hasp)",
+        "requiredItems": [],
+        "top": "16%",
+        "left": "69%",
+        "width": "1.5%",
       },
       {
         "svg":wallClock,
@@ -439,16 +503,16 @@ const viewData = [
         "requiredItems": [],
         "top": "4%",
         "left": "35%",
-        "width": "9%",
+        "width": "8%",
       },
       {
         "svg":waterCooler,
         "name": "waterCooler",
         "puzzleName": "A Short Drink from a Certain Fountain",
         "requiredItems": [],
-        "top": "32%",
-        "left": "38%",
-        "width": "10%",
+        "top": "47%",
+        "left": "43%",
+        "width": "7%",
       },
     ]
   },
@@ -494,11 +558,11 @@ const viewData = [
       {
         "svg":elvis,
         "name": "elvis",
-        "puzzleName": "The Once and Future King",
+        "puzzleName": "King Nine Will Not Return",
         "requiredItems": [],
-        "top": "3%",
+        "top": "5%",
         "left": "6%",
-        "width": "18%",
+        "width": "16%",
       },
       {
         "svg":friends,
@@ -508,6 +572,15 @@ const viewData = [
         "top": "25.5%",
         "left": "64%",
         "width": "5%",
+      },
+      {
+        "svg":greenbox,
+        "name": "greenbox",
+        "puzzleName": "The Jeopardy Room (Green Lock)",
+        "requiredItems": [],
+        "top": "78%",
+        "left": "67%",
+        "width": "8%",
       },
       {
         "svg":executioner,
@@ -523,18 +596,18 @@ const viewData = [
         "name": "keyboard",
         "puzzleName": "A Piano in the House",
         "requiredItems": [],
-        "top": "70%",
-        "left": "70%",
-        "width": "21%",
+        "top": "73%",
+        "left": "77%",
+        "width": "19%",
       },
       {
         "svg":microphone,
         "name": "microphone",
         "puzzleName": "I Sing the Body Electric",
         "requiredItems": [],
-        "top": "41%",
-        "left": "1%",
-        "width": "13%",
+        "top": "38%",
+        "left": "6%",
+        "width": "6%",
       },
       {
         "svg":music,
@@ -564,13 +637,13 @@ const viewData = [
         "width": "60%",
       },
       {
-        "svg":trophy,
-        "name": "trophy",
+        "svg":lineman,
+        "name": "lineman",
         "puzzleName": "The Lineman",
         "requiredItems": [],
         "top": "51%",
-        "left": "65%",
-        "width": "4%",
+        "left": "63%",
+        "width": "6%",
       },
       {
         "svg":tv,
@@ -580,6 +653,15 @@ const viewData = [
         "top": "36.5%",
         "left": "21.5%",
         "width": "28%",
+      },
+      {
+        "svg":violetbox,
+        "name": "violetbox",
+        "puzzleName": "The Jeopardy Room (Violet Lock)",
+        "requiredItems": [],
+        "top": "11%",
+        "left": "65%",
+        "width": "7%",
       },
     ]
   },
@@ -605,13 +687,13 @@ const viewData = [
         "width": "11%",
       },
       {
-        "svg":arrow,
-        "name": "arrow",
-        "puzzleName": "I Shot an Arrow into the Air",
+        "svg":leprechaunpainting,
+        "name": "leprechaunpainting",
+        "puzzleName": "The Leprechaun-Artist",
         "requiredItems": [],
-        "top": "19%",
-        "left": "11%",
-        "width": "13%",
+        "top": "17%",
+        "left": "6%",
+        "width": "14%",
       },
       {
         "svg":doll,
@@ -639,6 +721,15 @@ const viewData = [
         "top": "57.5%",
         "left": "62%",
         "width": "5%",
+      },
+      {
+        "svg":goldbox,
+        "name": "goldbox",
+        "puzzleName": "The Jeopardy Room (Gold Lock)",
+        "requiredItems": [],
+        "top": "75%",
+        "left": "21%",
+        "width": "8%",
       },
       {
         "svg":hearNoEvil,

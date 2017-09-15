@@ -32,7 +32,9 @@ class ViewPane extends Component {
     return (
       <div className="viewpane" style={style}>
         {viewItems}
-        <div className="newPuzzleCount">Puzzles Not Found: {this.props.newPuzzleCount} / {this.props.totalPuzzleCount}</div>
+        {this.props.newPuzzleCount &&
+          <div className="newPuzzleCount">Puzzles Not Found: {this.props.newPuzzleCount} / {this.props.totalPuzzleCount}</div>
+        }
       </div>
     );
   }
