@@ -111,7 +111,7 @@ const viewData = [
       {
         "svg":deathMask,
         "name": "deathMask",
-        "puzzleName": "Deaths Head Revisited",
+        "puzzleName": "Deaths-Head Revisited",
         "requiredItems": [],
         "top": "16%",
         "left": "53%",
